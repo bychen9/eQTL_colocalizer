@@ -222,7 +222,7 @@ trait_chrom_pos = hash_table[trait_region_rs]
 trait_chrom_pos = trait_chrom_pos[!sapply(trait_chrom_pos,is.null)]
 head(trait_chrom_pos, 3)
 
-tissueTable = read.table(file="/project/voight_GWAS/bychen9/eqtl_coloc/GTEx_v8_Tissue_Summary_with_filenames.csv", sep=",", header=TRUE)
+tissueTable = read.table(file="/project/voight_GWAS/bychen9/eqtl_coloc/GTEx_Tissue_Summary_with_filenames.csv", sep=",", header=TRUE)
 
 #Convert to strings from factors
 tissueTable$Tissue = as.character(tissueTable$Tissue)
