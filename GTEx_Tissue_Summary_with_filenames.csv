@@ -1,55 +1,55 @@
-Tissue,NumberRNASeqandGTSamples,NumberRNASeqSamples,Number_of_eGenes,Filename
-Muscle - Skeletal,491,564,10777,Muscle_Skeletal.allpairs.txt.gz
-Skin - Sun Exposed (Lower leg),414,473,13109,Skin_Sun_Exposed_Lower_leg.allpairs.txt.gz
-Thyroid,399,446,14313,Thyroid.allpairs.txt.gz
-Adipose - Subcutaneous,385,442,11866,Adipose_Subcutaneous.allpairs.txt.gz
-Artery - Tibial,388,441,11947,Artery_Tibial.allpairs.txt.gz
-Lung,383,427,11307,Lung.allpairs.txt.gz
-Nerve - Tibial,361,414,13976,Nerve_Tibial.allpairs.txt.gz
-Whole Blood,369,407,8663,Whole_Blood.allpairs.txt.gz
-Esophagus - Mucosa,358,407,11694,Esophagus_Mucosa.allpairs.txt.gz
-Skin - Not Sun Exposed (Suprapubic),335,387,10857,Skin_Not_Sun_Exposed_Suprapubic.allpairs.txt.gz
-Esophagus - Muscularis,335,370,11071,Esophagus_Muscularis.allpairs.txt.gz
-Adipose - Visceral (Omentum),313,355,8991,Adipose_Visceral_Omentum.allpairs.txt.gz
-Cells - Transformed fibroblasts,300,343,11091,Cells_Transformed_fibroblasts.allpairs.txt.gz
-Heart - Left Ventricle,272,303,7377,Heart_Left_Ventricle.allpairs.txt.gz
-Artery - Aorta,267,299,9205,Artery_Aorta.allpairs.txt.gz
-Heart - Atrial Appendage,264,297,8096,Heart_Atrial_Appendage.allpairs.txt.gz
-Breast - Mammary Tissue,251,290,6983,Breast_Mammary_Tissue.allpairs.txt.gz
-Colon - Transverse,246,274,8094,Colon_Transverse.allpairs.txt.gz
-Stomach,237,262,6384,Stomach.allpairs.txt.gz
-Testis,225,259,13759,Testis.allpairs.txt.gz
-Pancreas,220,248,7146,Pancreas.allpairs.txt.gz
-Esophagus - Gastroesophageal Junction,213,244,7254,Esophagus_Gastroesophageal_Junction.allpairs.txt.gz
-Colon - Sigmoid,203,233,7159,Colon_Sigmoid.allpairs.txt.gz
-Adrenal Gland,175,190,6421,Adrenal_Gland.allpairs.txt.gz
-Pituitary,157,183,6263,Pituitary.allpairs.txt.gz
-Liver,153,175,4005,Liver.allpairs.txt.gz
-Brain - Cerebellum,154,173,8429,Brain_Cerebellum.allpairs.txt.gz
-Artery - Coronary,152,173,4383,Artery_Coronary.allpairs.txt.gz
-Spleen,146,162,6578,Spleen.allpairs.txt.gz
-Brain - Caudate (basal ganglia),144,160,5700,Brain_Caudate_basal_ganglia.allpairs.txt.gz
-Brain - Cortex,136,158,6146,Brain_Cortex.allpairs.txt.gz
-Prostate,132,152,4243,Prostate.allpairs.txt.gz
-Brain - Nucleus accumbens (basal ganglia),130,147,5118,Brain_Caudate_basal_ganglia.allpairs.txt.gz
-Small Intestine - Terminal Ileum,122,137,4763,Small_Intestine_Terminal_Ileum.allpairs.txt.gz
-Brain - Cerebellar Hemisphere,125,136,6889,Brain_Cerebellar_Hemisphere.allpairs.txt.gz
-Ovary,122,133,3789,Ovary.allpairs.txt.gz
-Cells - EBV-transformed lymphocytes,117,130,3845,Cells_EBV-transformed_lymphocytes.allpairs.txt.gz
-Brain - Frontal Cortex (BA9),118,129,5086,Brain_Frontal_Cortex_BA9.allpairs.txt.gz
-Brain - Hippocampus,111,123,3262,Brain_Hippocampus.allpairs.txt.gz
-Brain - Anterior cingulate cortex (BA24),109,121,4103,Brain_Anterior_cingulate_cortex_BA24.allpairs.txt.gz
-Brain - Hypothalamus,108,121,3077,Brain_Hypothalamus.allpairs.txt.gz
-Vagina,106,115,2527,Vagina.allpairs.txt.gz
-Uterus,101,111,2641,Uterus.allpairs.txt.gz
-Brain - Amygdala,88,100,2229,Brain_Amygdala.allpairs.txt.gz
-Minor Salivary Gland,85,97,2150,Minor_Salivary_Gland.allpairs.txt.gz
-Brain - Spinal cord (cervical c-1),83,91,2644,Brain_Spinal_cord_cervical_c-1.allpairs.txt.gz
-Brain - Substantia nigra,80,88,1807,Brain_Substantia_nigra.allpairs.txt.gz
-Kidney - Cortex,39,45,null,NA
-Bladder,10,11,null,NA
-Fallopian Tube,7,7,null,NA
-Cervix - Ectocervix,6,6,null,NA
-Cervix - Endocervix,5,5,null,NA
-Cells - Cultured fibroblasts,NA,NA,NA,NA
-Brain - Putamen (basal ganglia),111,124,4099,NA
+﻿Tissue,NumberRNASeqandGTSamples,NumberRNASeqSamples,Number_of_eGenes,Filename
+Muscle - Skeletal,706,803,13532,Muscle_Skeletal.allpairs.txt.gz
+Whole Blood,670,755,12360,Whole_Blood.allpairs.txt.gz
+Skin - Sun Exposed (Lower leg),605,701,16967,Skin_Sun_Exposed_Lower_leg.allpairs.txt.gz
+Artery - Tibial,584,663,15008,Artery_Tibial.allpairs.txt.gz
+Adipose - Subcutaneous,581,663,15607,Adipose_Subcutaneous.allpairs.txt.gz
+Thyroid,574,653,17684,Thyroid.allpairs.txt.gz
+Nerve - Tibial,532,619,17285,Nerve_Tibial.allpairs.txt.gz
+Skin - Not Sun Exposed (Suprapubic),517,604,15483,Skin_Not_Sun_Exposed_Suprapubic.allpairs.txt.gz
+Lung,515,578,14113,Lung.allpairs.txt.gz
+Esophagus - Mucosa,497,555,14675,Esophagus_Mucosa.allpairs.txt.gz
+Cells - Cultured fibroblasts,483,504,15219,Cells_Cultured_fibroblasts.allpairs.txt.gz
+Adipose - Visceral (Omentum),469,541,12482,Adipose_Visceral_Omentum.allpairs.txt.gz
+Esophagus - Muscularis,465,515,14110,Esophagus_Muscularis.allpairs.txt.gz
+Breast - Mammary Tissue,396,459,10872,Breast_Mammary_Tissue.allpairs.txt.gz
+Artery - Aorta,387,432,12493,Artery_Aorta.allpairs.txt.gz
+Heart - Left Ventricle,386,432,9642,Heart_Left_Ventricle.allpairs.txt.gz
+Heart - Atrial Appendage,372,429,10991,Heart_Atrial_Appendage.allpairs.txt.gz
+Colon - Transverse,368,406,11686,Colon_Transverse.allpairs.txt.gz
+Esophagus - Gastroesophageal Junction,330,375,10534,Esophagus_Gastroesophageal_Junction.allpairs.txt.gz
+Stomach,324,359,8771,Stomach.allpairs.txt.gz
+Testis,322,361,18795,Testis.allpairs.txt.gz
+Colon - Sigmoid,318,373,10550,Colon_Sigmoid.allpairs.txt.gz
+Pancreas,305,328,9660,Pancreas.allpairs.txt.gz
+Pituitary,237,283,9146,Pituitary.allpairs.txt.gz
+Adrenal Gland,233,258,8123,Adrenal_Gland.allpairs.txt.gz
+Spleen,227,241,10783,Spleen.allpairs.txt.gz
+Prostate,221,245,7356,Prostate.allpairs.txt.gz
+Artery - Coronary,213,240,6296,Artery_Coronary.allpairs.txt.gz
+Brain - Cerebellum,209,241,11240,Brain_Cerebellum.allpairs.txt.gz
+Liver,208,226,5734,Liver.allpairs.txt.gz
+Brain - Cortex,205,255,9082,Brain_Cortex.allpairs.txt.gz
+Brain - Nucleus accumbens (basal ganglia),202,246,8198,Brain_Nucleus_accumbens_basal_ganglia.allpairs.txt.gz
+Brain - Caudate (basal ganglia),194,246,8362,Brain_Caudate_basal_ganglia.allpairs.txt.gz
+Brain - Cerebellar Hemisphere,175,215,10027,Brain_Cerebellar_Hemisphere.allpairs.txt.gz
+Brain - Frontal Cortex (BA9),175,209,7335,Brain_Frontal_Cortex_BA9.allpairs.txt.gz
+Small Intestine - Terminal Ileum,174,187,6681,Small_Intestine_Terminal_Ileum.allpairs.txt.gz
+Brain - Hypothalamus,170,202,5499,Brain_Hypothalamus.allpairs.txt.gz
+Brain - Putamen (basal ganglia),170,205,6902,NA
+Ovary,167,180,5542,Ovary.allpairs.txt.gz
+Brain - Hippocampus,165,197,5517,Brain_Hippocampus.allpairs.txt.gz
+Brain - Anterior cingulate cortex (BA24),147,176,5640,Brain_Anterior_cingulate_cortex_BA24.allpairs.txt.gz
+Cells - EBV-transformed lymphocytes,147,174,4934,Cells_EBV-transformed_lymphocytes.allpairs.txt.gz
+Minor Salivary Gland,144,162,4836,Minor_Salivary_Gland.allpairs.txt.gz
+Vagina,141,156,3730,Vagina.allpairs.txt.gz
+Brain - Amygdala,129,152,3726,Brain_Amygdala.allpairs.txt.gz
+Uterus,129,142,3577,Uterus.allpairs.txt.gz
+Brain - Spinal cord (cervical c-1),126,159,4483,Brain_Spinal_cord_cervical_c-1.allpairs.txt.gz
+Brain - Substantia nigra,114,139,3301,Brain_Substantia_nigra.allpairs.txt.gz
+Kidney - Cortex,73,85,1260,NA
+Bladder,21,21,null,NA
+Cervix - Endocervix,10,10,null,NA
+Cervix - Ectocervix,9,9,null,NA
+Fallopian Tube,8,9,null,NA
+Kidney - Medulla,4,4,null,NA
