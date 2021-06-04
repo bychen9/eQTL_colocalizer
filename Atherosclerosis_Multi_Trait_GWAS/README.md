@@ -2,6 +2,8 @@
 
 This repository contains the code needed to generate dependency files and run the eQTL colocalizer pipeline. Given a GWAS signal of your choosing this pipeline will run COLOC on your signal and all the GTEx v8 single-tissue eQTLs.
 
+This directory contains the version of this code used in Bellomo et al. (https://www.medrxiv.org/content/10.1101/2021.05.21.21257493v1).
+
 **Preparing the pipeline:**
 - Download files:
   - Download GRCh38 dbSNP BED files from here: https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/BED/
@@ -11,6 +13,6 @@ This repository contains the code needed to generate dependency files and run th
   - Run dbsnp_hash_table_maker.py to create hash tables from the GRCh38 dbSNP BED files.
   - Make sure you also have GTEx_Tissue_Summary_with_filenames.csv and update the paths to these files in eqtl_colocalizer.R
 
-**Running the eQTL colocalizer pipeline:**
+**Running the pipeline:**
 - Create an analysis directory, and add eqtl_colocalizer.R and the eqtl_config.R file corresponding to the GWAS signal on which you would like to perform eQTL colocalization analysis. 
 - Then, execute the eqtl_colocalizer.R in that directory (eg Rscript ./eqtl_colocalizer.R)
