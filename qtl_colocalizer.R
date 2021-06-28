@@ -529,7 +529,7 @@ for(i in 1:nrow(eGenes)){
 
 			print("lead SNP is not in 1KG so we need to find a different SNP for making the RA plots")
 
-			find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_eQTL, P) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, pval = P)
+			find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_eQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, pval = trait_Pcol)
 			find_new_lead_SNP_df$chromosome = as.integer(gsub('[a-zA-Z]', '', find_new_lead_SNP_df$chromosome)) 
 
 			ld_clump_df <- find_new_lead_SNP_df %>%
@@ -542,11 +542,11 @@ for(i in 1:nrow(eGenes)){
 
 		leadSNP_DF = colocInputFile#[colocInputFile$SNP == lead_SNP,]
 		leadSNP_DF$chrom_b38 = as.integer(gsub('[a-zA-Z]', '', leadSNP_DF$chrom_b38)) 
-		leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_eQTL, P)
+		leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_eQTL, trait_Pcol)
 
 		if (i == 1) {
 			#plot for trait	
-			trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, p_value = P)
+			trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, p_value = trait_Pcol)
 			trait_plot_title = paste(lead_SNP, trait)
 			RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
 			pdf(file = paste0(lead_SNP, "_", trait,".pdf"), paper = 'USr', width = 15, height = 20)  
