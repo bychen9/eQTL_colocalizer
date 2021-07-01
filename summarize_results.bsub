@@ -1,0 +1,41 @@
+#Run code to collect the QTL colocalization results after they have all been generated.
+#BSUB -J summarize_qlt_results
+#BSUB -o TRAITNAME_GTEx_COLOC_Results_Summary.%J-%I.out
+#BSUB -e TRAITNAME_GTEx_COLOC_Results_Summary.%J-%I.err
+#BSUB -N
+
+today=`date +%F`
+now=`date +%T`
+
+#load config file
+. qtl_config.sh
+
+#write header to the summary results file
+#NOTE need to edit loaction of Trait
+printf "SNP\tGene\tGene-Tissue\tTrait\tPPID\tPP\n" > "qtl_coloc_results_summary_"$today"_"$now".txt" 
+
+#go through each lead SNP directory
+for dir in ./rs*/
+do
+    echo $dir
+    dirname=`echo $dir | tr "/" "\t" | cut -f 2`
+    echo $dirname
+
+    cd  $dir
+
+    #for each GTEx coloc output in the directory
+    for colocOut in ./*coloc_results_summary.txt
+    do
+        echo $colocOut
+        colocfilename=`basename $colocOut`
+        echo $colocfilename
+
+        #grab the information we need from the locus coloc results file
+        sed "s/^/$colocfilename /" $colocOut | sed "s/^/$dirname /" | sed "s/_T2D_/ T2D /" | sed "s/coloc_results_summary.txt//" | sed "s/_ENSG/ ENSG/"| tr " " "\t" | tail -n+3 >>
+     
+
+ 
+
+
+
+
