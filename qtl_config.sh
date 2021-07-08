@@ -16,7 +16,9 @@ trait_MAFcol="Freq.Gwas"
 traitType="cc"
 #This is the proportion of samples that are cases in a case control GWAS, if you are using a quantitative trait this should be set to "". traitProp = cases / case + controls
 traitProp=0.536671 #look this up
-#path to lead SNPs file, set as empty string to use plink
+#path to lead SNPs file, set as empty string to use plink to identify lead SNPs from the GWAS summary stat file
 leadSNPsFilePath=""
 #qtlType is set to "eqtl" or "sqtl"
 qtlType="eqtl"
+#colc window size in bps, this is only required when no leadSNPsFilePath is set. If you are providing a leadSNPsFile leave he empty string field in window
+window=""

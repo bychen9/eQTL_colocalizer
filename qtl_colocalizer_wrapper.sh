@@ -12,6 +12,8 @@ if [ "$leadSNPsFilePath" == "" ]
 then
 	echo "No lead SNPs file specified. Running PLINK to find significant SNPs"
 
+    #radius=$win
+
 	#Perform LD-clumping from GWAS summary statstics to  get clumps/loci of significant SNPs 
 	plink --noweb --bfile /project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed  --keep /project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink --clump-p1 .000001 --clump-r2 0.2  --clump-kb 1000 --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
 
@@ -29,6 +31,7 @@ sed "s/TRAITNAME/$trait/" qtl_coloc_template.bsub > $trait"_template.bsub"
 #Add fields from qtl_config.sh to QTL_config_template.R for trait
 sed "s/TRAITNAME/$trait/" QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/QTL/$qtlType/" > $trait"_QTL_config_template.R" 
 
+#for each lead SNP
 cat $leadSNPsFilePath | while read line
 do 
 	echo $line
@@ -65,7 +68,7 @@ do
 	#add an edited version of the QTL_config.R file to the dir (edit gtex file path, chr, start, and stop with sed)
 	sed "s/SNPNUMBER/$SNP/" ../$trait"_QTL_config_template.R" | sed "s/CHROMOSOME/$CHR/" | sed "s/STARTBP/$Start/" | sed "s/STOPBP/$Stop/" > ./QTL_config.R
 
-	#fire off the bsub job
+	#fire off the bsub job for this lead SNP
 	bsub < $bsubfile -q voight_normal
 
 	#cd back into the main directory to go to the next SNP 
@@ -75,3 +78,11 @@ do
 	echo
     
 done
+
+echo "all lead SNP jobs have been submitted"
+
+#replace "TRAITNAME" with the $trait in out and err file names for summary file bsub
+sed -i "s/TRAITNAME/$trait/" summarize_results.bsub
+
+#run bsub to collect all of the COLOC results into 1 file
+bsub < summarize_results.bsub -q voight_normal
