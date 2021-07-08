@@ -4,11 +4,13 @@
 today=`date +%F`
 now=`date +%T`
 
+pwd
+
 #load config file
 . qtl_config.sh
 
 #write header to the summary results file
-printf "SNP\tGene\tGeneID-Tissue\tTrait\tPPID\tPP\n" > $qtlType"_coloc_results_all_summary_"$today"_"$now".txt" 
+printf "SNP\tGene\tGeneID-Tissue\tTrait\tPPID\tPP\n" > $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt" 
 
 #go through each lead SNP directory
 for dir in ./rs*/
@@ -30,7 +32,7 @@ do
         trait_str="_"$trait"_"
 
         #grab the information we need from the locus coloc results file
-        sed "s/^/$colocfilename /" $colocOut | sed "s/^/$dirname /" | sed "s,$trait_str, $trait," | sed "s/coloc_results_summary.txt//" | sed "s/_ENSG/ ENSG/"| tr " " "\t" | tail -n+3 >> $qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
+        sed "s/^/$colocfilename /" $colocOut | sed "s/^/$dirname /" | sed "s,$trait_str, $trait," | sed "s/coloc_results_summary.txt//" | sed "s/_ENSG/ ENSG/"| tr " " "\t" | tail -n+3 >> ../$trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
 
     done
 
@@ -39,7 +41,7 @@ do
 done
 
 #run Rscript to generate a file with PP3, PP4, and PP4/(PP3 + PP4) for each lead SNP-Gene-Tissue result.
-Rscript ./summarize_qtl_coloc_PP3_PP4_results.R $qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
+Rscript ./summarize_qtl_coloc_PP3_PP4_results.R $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
 
 echo "Your summary QTL file is ready!" 
 

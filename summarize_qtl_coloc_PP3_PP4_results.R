@@ -6,6 +6,15 @@ library(tidyverse)
 args = commandArgs(TRUE)
 all_summary_coloc_results_file <- args[1]
 
-all_summary_coloc_results_df <- read_csv(file = all_summary_coloc_results_file, col_names = TRUEi, sep="\t")
+all_summary_coloc_results_df <- read_tsv(file = all_summary_coloc_results_file, col_names = TRUE)
 
-PP3_PP4 <- all_summary_coloc_results_df %>% group_by(SNP,GeneID-Tissue) %>% summarize()
+#Spread the PPID file to make each results 1 row
+one_row_results <- all_summary_coloc_results_df %>% spread(PPID,PP)
+
+#calculate PP4 conditioned on two peaks PP4/(PP3+PP4)
+one_row_results$cond.PP.H4.abf <-  one_row_results$PP.H4.abf/(one_row_results$PP.H3.abf + one_row_results$PP.H4.abf)
+
+#generate string for output file
+outputFilename <- gsub(".txt","spread_condPP4.txt",all_summary_coloc_results_file)
+
+write.table(one_row_results, file= outputFilename, sep="\t", row.names=FALSE, quote=FALSE)
