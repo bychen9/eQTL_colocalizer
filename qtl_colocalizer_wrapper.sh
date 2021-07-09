@@ -1,9 +1,12 @@
+#!/bin/bash
 # Runs qtl_colocalizer.R
+#This version is designed to use an LSF job submission to parallelize the coloc jobs
 # Input files needed in directory: qtl_config.sh (modified), qtl_coloc_template.bsub, QTL_config_template.R, qtl_colocalizer.R
 
 module load plink/1.90Beta4.5
 module load R/3.6.3
 module load bedtools2
+
 echo "modules loaded"
 
 . qtl_config.sh
@@ -12,7 +15,8 @@ if [ "$leadSNPsFilePath" == "" ]
 then
 	echo "No lead SNPs file specified. Running PLINK to find significant SNPs"
 
-    #radius=$win
+    #calculate half of the window, so we can generate a window centered around the lead SNP
+    radius=`echo $((window/2))`
 
 	#Perform LD-clumping from GWAS summary statstics to  get clumps/loci of significant SNPs 
 	plink --noweb --bfile /project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed  --keep /project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink --clump-p1 .000001 --clump-r2 0.2  --clump-kb 1000 --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
@@ -20,7 +24,7 @@ then
 	awk '{OFS="\t"} (NR>1 && NF>0) {print "chr"$1,$4,$4+1,$3}' allChrMergedClumped.clumped | sort -k1,1 -k2,2n > allChrMergedClumped.bed
 
 	#create file with rsid, CHR, BP, Start, Stop as columns
-	awk '{print $4"\t"$1"\t"$2"\t"$2-250000"\t"$2+250000}' allChrMergedClumped.bed | sed 's/chr//' > $trait"_lead_SNPs.txt"
+	awk -v var="$radius" '{print $4"\t"$1"\t"$2"\t"$2-var"\t"$2+var}' allChrMergedClumped.bed | sed 's/chr//' > $trait"_lead_SNPs.txt"
 
 	leadSNPsFilePath=$trait"_lead_SNPs.txt"
 fi

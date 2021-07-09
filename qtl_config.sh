@@ -20,5 +20,5 @@ traitProp=0.536671 #look this up
 leadSNPsFilePath=""
 #qtlType is set to "eqtl" or "sqtl"
 qtlType="eqtl"
-#colc window size in bps, this is only required when no leadSNPsFilePath is set. If you are providing a leadSNPsFile leave he empty string field in window
+#colc window size in bps, this is only required when no leadSNPsFilePath is set. If you are providing a leadSNPsFile leave the empty string field for window
 window=""

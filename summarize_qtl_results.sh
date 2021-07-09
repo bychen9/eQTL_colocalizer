@@ -1,3 +1,4 @@
+#!/bin/bash
 #Code to collect the QTL colocalization results after they have all been generated.
 
 #set variables for date and time
