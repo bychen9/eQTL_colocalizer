@@ -503,6 +503,16 @@ for(i in 1:nrow(eGenes)){
 		#remove any NAs
 		colocInputFile = colocInputFile[complete.cases(colocInputFile), ]
 
+        #check for 0s in the trait_Pcol
+        if (0 %in% colocInputFile[[trait_Pcol]]){
+
+            print("WARNING: THERE ARE SNPS WITH P-VALUES OF 0 AT THIS LOCUS. These SNPs have been removed for the Colocalization anlysis and may lead to unusual regional association plots")
+
+            #remove SNPs who's trait P-value is 0 
+            colocInputFile = colocInputFile[colocInputFile[[trait_Pcol]] != 0,]
+
+        }
+
 		#write colocInputFile to file for making locus zoom plots
 		colocInputFile_outputStr = paste(out_prefix,"coloc_input_data.txt",sep="_")
 		write.table(colocInputFile, file= colocInputFile_outputStr, sep="\t", row.names=FALSE, quote=FALSE)
@@ -597,6 +607,15 @@ for(i in 1:nrow(eGenes)){
 
 		#remove any NAs
 		colocInputMasterFile = colocInputMasterFile[complete.cases(colocInputMasterFile), ]
+
+         if (0 %in% colocInputMasterFile[[trait_Pcol]]){
+
+            print("WARNING: THERE ARE SNPS WITH P-VALUES OF 0 AT THIS LOCUS. These SNPs have been removed for the Colocalization anlysis and may lead to unusual regional association plots")
+
+            #remove SNPs who's trait P-value is 0 
+            colocInputMasterFile = colocInputMasterFile[colocInputMasterFile[[trait_Pcol]] != 0,]
+
+        }        
 
 		#combine intron columns
 		colocInputMasterFile$intronID = paste(colocInputMasterFile$intron_chr, colocInputMasterFile$intron_bp_first, colocInputMasterFile$intron_bp_end, colocInputMasterFile$intron_clu, colocInputMasterFile$eGeneID, sep=":")
