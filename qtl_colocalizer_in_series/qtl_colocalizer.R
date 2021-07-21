@@ -33,7 +33,6 @@ ld_extract <- function(variants, bfile, plink_bin) {
   )
   system(fun2)
   
-  print("hello")
   res <- data.table::fread(paste0(fn, ".ld")) %>% 
     dplyr::select(SNP_A, SNP_B, R)
   

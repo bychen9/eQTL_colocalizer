@@ -33,7 +33,6 @@ ld_extract <- function(variants, bfile, plink_bin) {
   )
   system(fun2)
   
-  print("hello")
   res <- data.table::fread(paste0(fn, ".ld")) %>% 
     dplyr::select(SNP_A, SNP_B, R)
   
@@ -45,7 +44,7 @@ ld_extract <- function(variants, bfile, plink_bin) {
 }
 
 
-gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chromosome = chromosome, position = position, p_value = p_value, p_value_threshold = 1, clump_kb = 1000, clump_r2 = 1, plot_distance = 500000, bfile, plink_bin, plot_title = NULL, plot_subtitle = NULL, n_row = 2) {
+gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chromosome = chromosome, position = position, p_value = p_value, p_value_threshold = 0.0000001, clump_kb = 1000, clump_r2 = 0.2, plot_distance = 500000, bfile, plink_bin, plot_title = NULL, plot_subtitle = NULL, n_row = 2) {
   df <- df %>%
     dplyr::select(rsid = {{ rsid }}, chromosome = {{ chromosome }}, position = {{ position }}, p_value = {{ p_value }}) %>%
     mutate_if(is.factor, as.character)
@@ -58,7 +57,7 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
     indep_snps <- df %>%
       dplyr::select(rsid = {{ rsid }}, pval = {{ p_value }}) %>%
       filter(pval < p_value_threshold) %>%
-      ld_clump(bfile = bfile, plink_bin = plink_bin, clump_kb = 500, clump_r2 = 0.2)
+      ld_clump(bfile = bfile, plink_bin = plink_bin, clump_kb = 1000, clump_r2 = 0.2)
   }
 
   locus_snps <- df %>%
@@ -137,6 +136,7 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
 
 #Read in the arguments from the config file
 source("QTL_config.R")
+source(setup_config_R)
 
 #Print all of the config file settings to screen or the stnd out file
 print("trait")
@@ -161,10 +161,14 @@ print(colocStop)
 print(lead_SNP)
 print("QTL type:")
 print(qtlType)
+
+bps_in_region = colocStop - colocStart
 #check if the lead_SNP is in the plink BIM file
 
 SNP_str <- paste('"\t',lead_SNP,'\t"',sep="")
-SNP_grep_str <- paste('grep','-P', SNP_str, "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref.bim", ">", "leadSNP_test_file.txt" , sep=" " )
+bim_file = paste(plink_bfile,".bim", sep ="")
+SNP_grep_str <- paste('grep','-P', SNP_str, bim_file, ".bim" ">", "leadSNP_test_file.txt" , sep=" " )
+#SNP_grep_str <- paste('grep','-P', SNP_str, "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref.bim", ">", "leadSNP_test_file.txt" , sep=" " )
 
 system(SNP_grep_str)
 
@@ -172,11 +176,11 @@ fileInfo <- file.info("leadSNP_test_file.txt")
 
 if(fileInfo$size == 0){
 
-    SNPin1KG = FALSE
+    SNPinLDref = FALSE
 
 } else{
 
-    SNPin1KG = TRUE
+    SNPinLDref = TRUE
 
 }
 
@@ -210,7 +214,8 @@ trait_region_rs = trait_region[[trait_SNPcol_str]]
 head(trait_region_rs, 3)
 
 #use hash tables to find chromosome positions
-hash_table_file = paste0("/project/voight_GWAS/bychen9/human_9606_b151_GRCh38p7/BED/hash_tables_2/chr_", chrom, "_snp151_hash_table.json")
+hash_table_file = paste0(hash_table_dir, "chr_", chrom, "_snp151_hash_table.json")
+#hash_table_file = paste0("/project/voight_GWAS/bychen9/human_9606_b151_GRCh38p7/BED/hash_tables_2/chr_", chrom, "_snp151_hash_table.json")
 print(hash_table_file)
 
 hash_table <- fromJSON(file = hash_table_file) 
@@ -223,10 +228,14 @@ trait_chrom_pos = hash_table[trait_region_rs]
 trait_chrom_pos = trait_chrom_pos[!sapply(trait_chrom_pos,is.null)]
 head(trait_chrom_pos, 3)
 
+#read in tissue table from ssetup_config.R
+#tissueTable = read.table(file=tissue_table, sep=",", header=TRUE)
 if (qtlType == "eqtl") {
-	tissueTable = read.table(file="/project/voight_GWAS/bychen9/eqtl_coloc/GTEx_v8_Tissue_Summary_with_filenames.csv", sep=",", header=TRUE)
+    tissueTable = read.table(file=eQTL_tissue_table, sep=",", header=TRUE)
+	#tissueTable = read.table(file="/project/voight_GWAS/bychen9/eqtl_coloc/GTEx_v8_Tissue_Summary_with_filenames.csv", sep=",", header=TRUE)
 } else if (qtlType == "sqtl") {
-	tissueTable = read.table(file="/project/voight_GWAS/bychen9/sqtl_coloc/GTEx_v8_sQTL_Tissue_Summary_with_filenames.csv", sep=",", header=TRUE)
+    tissueTable = read.table(file=sQTL_tissue_table, sep=",", header=TRUE)
+	#tissueTable = read.table(file="/project/voight_GWAS/bychen9/sqtl_coloc/GTEx_v8_sQTL_Tissue_Summary_with_filenames.csv", sep=",", header=TRUE)
 } else {
     print("ERROR: Please specify qtlType: \"eqtl\" or \"sqtl\"")
     quit()
@@ -245,7 +254,8 @@ tissueTable$Tissue = tissueTable_tissue_noSpace
 
 if (qtlType == "eqtl") {
 	#create csv file from significant pair files
-	signif_pair_files <- list.files(path="/project/voight_datasets/GTEx_v8/eQTL/GTEx_Analysis_v8_eQTL_tabix", pattern="*tab.gz$", full.names=TRUE, recursive=FALSE)
+    signif_pair_files <- list.files(path=eQTL_sig_qtl_tabix_dir , pattern="*tab.gz$", full.names=TRUE, recursive=FALSE)
+	#signif_pair_files <- list.files(path="/project/voight_datasets/GTEx_v8/eQTL/GTEx_Analysis_v8_eQTL_tabix", pattern="*tab.gz$", full.names=TRUE, recursive=FALSE)
 
 	lead_SNP_pos = hash_table[[lead_SNP]]
 
@@ -256,7 +266,9 @@ if (qtlType == "eqtl") {
 		system(paste("tabix", file, lead_SNP_pos_tabix, ">", paste0(lead_SNP, "_temp.csv")))    
 
 		#add tissue name
-		tissue_name = gsub(".v8.signif_variant_gene_pairs.tab.gz", "", gsub("/project/voight_datasets/GTEx_v8/eQTL/GTEx_Analysis_v8_eQTL_tabix/", "", file))
+        sig_qtl_tabix_dir_with_slash = paste0(eQTL_sig_qtl_tabix_dir,"/")
+        tissue_name = gsub(".v8.signif_variant_gene_pairs.tab.gz", "", gsub(sig_qtl_tabix_dir_with_slash, "", file))
+		#tissue_name = gsub(".v8.signif_variant_gene_pairs.tab.gz", "", gsub("/project/voight_datasets/GTEx_v8/eQTL/GTEx_Analysis_v8_eQTL_tabix/", "", file))
 		system(paste0("sed -i \"s/$/\t", tissue_name, "/\" ", lead_SNP, "_temp.csv"))
 		system(paste0("cat ", lead_SNP, "_temp.csv >> ", lead_SNP, ".csv"))
 })
@@ -271,7 +283,8 @@ if (qtlType == "eqtl") {
 
 } else if (qtlType == "sqtl") {
 	#create csv file from significant pair files
-	signif_pair_files <- list.files(path="/project/voight_datasets/GTEx_v8/sQTL/GTEx_Analysis_v8_sQTL_tabix", pattern="*tab.gz$", full.names=TRUE, recursive=FALSE)
+	signif_pair_files <- list.files(path=sQTL_sig_qtl_tabix_dir, pattern="*tab.gz$", full.names=TRUE, recursive=FALSE)
+    #signif_pair_files <- list.files(path="/project/voight_datasets/GTEx_v8/sQTL/GTEx_Analysis_v8_sQTL_tabix", pattern="*tab.gz$", full.names=TRUE, recursive=FALSE)
 	lead_SNP_pos = hash_table[[lead_SNP]]
 	#convert format for tabix
 	lead_SNP_pos_tabix = paste0(gsub("_",":",lead_SNP_pos), "-", gsub("^.*?_","",lead_SNP_pos))
@@ -280,7 +293,9 @@ if (qtlType == "eqtl") {
 		system(paste("tabix", file, lead_SNP_pos_tabix, ">", paste0(lead_SNP, "_temp.csv")))
 
 		#add tissue name
-		tissue_name = gsub(".v8.signif_variant_gene_pairs.tab.gz", "", gsub("/project/voight_datasets/GTEx_v8/sQTL/GTEx_Analysis_v8_sQTL_tabix/", "", file))
+        sig_qtl_tabix_dir_with_slash = paste0(sQTL_sig_qtl_tabix_dir,"/")
+        tissue_name = gsub(".v8.signif_variant_gene_pairs.tab.gz", "", gsub(sig_qtl_tabix_dir_with_slash, "", file))
+		#tissue_name = gsub(".v8.signif_variant_gene_pairs.tab.gz", "", gsub("/project/voight_datasets/GTEx_v8/sQTL/GTEx_Analysis_v8_sQTL_tabix/", "", file))
 		system(paste0("sed -i \"s/$/\t", tissue_name, "/\" ", lead_SNP, "_temp.csv"))
 		system(paste0("cat ", lead_SNP, "_temp.csv >> ", lead_SNP, ".csv"))
 })
@@ -347,9 +362,11 @@ for(i in 1:nrow(eGenes)){
     }
     
 	if (qtlType == "eqtl") {
-		tabix_allpair_path = paste0("/project/voight_datasets_01/GTEx_v8/TissueSpecific_tabix/", gsub("txt", "tab", allpair_filename))
+        tabix_allpair_path = paste0(eQTL_all_qtl_tabix_dir, gsub("txt", "tab", allpair_filename))
+		#tabix_allpair_path = paste0("/project/voight_datasets_01/GTEx_v8/TissueSpecific_tabix/", gsub("txt", "tab", allpair_filename))
 	} else if (qtlType == "sqtl") {
-		tabix_allpair_path = paste0("/project/voight_viz/bychen9/sQTL_tabix/", gsub("sqtl_allpairs.txt", "tab", allpair_filename))
+		tabix_allpair_path = paste0(sQTL_all_qtl_tabix_dir, gsub("sqtl_allpairs.txt", "tab", allpair_filename))
+        #tabix_allpair_path = paste0("/project/voight_viz/bychen9/sQTL_tabix/", gsub("sqtl_allpairs.txt", "tab", allpair_filename))
 	}
     qtl_N <- tissueLine$NumberRNASeqandGTSamples
 
@@ -371,7 +388,10 @@ for(i in 1:nrow(eGenes)){
 		bed_liftover = data.frame("chr" = c(paste0("chr", chrom), paste0("chr", chrom)), "bp1" = c(colocStart - 1, colocStop - 1), "bp2" = c(colocStart, colocStop)) 
 		write.table(bed_liftover,file=paste0("temp_hg19.bed"),sep="\t",quote = FALSE,row.names=FALSE,col.names=FALSE)
 
-		system("liftOver temp_hg19.bed /appl/liftOver-20180423/chains/hg19ToHg38.over.chain temp_hg38.bed temp_hg19.unmapped -bedPlus=3 -tab")
+        #generate liftOver command
+        liftOver_command = paste( "liftOver temp_hg19.bed", liftOver_chain, "temp_hg38.bed temp_hg19.unmapped -bedPlus=3 -tab", sep=" ")
+        system(liftOver_command)
+		#system("liftOver temp_hg19.bed /appl/liftOver-20180423/chains/hg19ToHg38.over.chain temp_hg38.bed temp_hg19.unmapped -bedPlus=3 -tab")
 
 		hg38_positions = as.data.frame(read.table("temp_hg38.bed", header=FALSE, sep="\t")) 
 
@@ -473,6 +493,8 @@ for(i in 1:nrow(eGenes)){
 
     eGeneTissue_region = merge(eGeneTissue_region, uniqID_DF, by = "chromosome_position")  
 
+    ################################ eQTL colocalization and RA Plots ################################ 
+
 	if (qtlType == "eqtl") {
 		print("merging the trait and eqtl data on unique ID")
 		#merge the trait and eGeneTissue region DFs on rs numbers
@@ -520,24 +542,25 @@ for(i in 1:nrow(eGenes)){
 
 		#generate regional association plot
 
-		#find lead SNP in 1KG if needed
-		if (SNPin1KG == TRUE){
+		#find lead SNP in LD reference if needed
+		if (SNPinLDref == TRUE){
 
 			print(lead_SNP)
 
 		} else {
 
-			print("lead SNP is not in 1KG so we need to find a different SNP for making the RA plots")
+			print("lead SNP is not in the provided LD reference, so we need to find a different SNP for making the RA plots")
 
 			find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_eQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, pval = trait_Pcol)
 			find_new_lead_SNP_df$chromosome = as.integer(gsub('[a-zA-Z]', '', find_new_lead_SNP_df$chromosome)) 
 
 			ld_clump_df <- find_new_lead_SNP_df %>%
-			ld_clump(bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", clump_kb = 500, clump_r2 = 0.2)
+            ld_clump(bfile = plink_bfile, plink_bin = "plink", clump_kb = clump_KB , clump_r2 = clump_R2)
+			#ld_clump(bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", clump_kb = 500, clump_r2 = 0.2)
 
 			lead_SNP <- as.character(ld_clump_df[which.min(ld_clump_df$pval),]$rsid)
 
-	}
+	    }
 
 
 		leadSNP_DF = colocInputFile#[colocInputFile$SNP == lead_SNP,]
@@ -545,10 +568,12 @@ for(i in 1:nrow(eGenes)){
 		leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_eQTL, trait_Pcol)
 
 		if (i == 1) {
-			#plot for trait	
+			#plot trait data if it is the first time going through the loop	
 			trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, p_value = trait_Pcol)
 			trait_plot_title = paste(lead_SNP, trait)
-			RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
+
+            RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
+			#RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
 			pdf(file = paste0(lead_SNP, "_", trait,".pdf"), paper = 'USr', width = 15, height = 20)  
 			print(RA_plot)
 			dev.off()
@@ -556,11 +581,14 @@ for(i in 1:nrow(eGenes)){
 
 		eQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, p_value = pvalue_eQTL)
 		eQTL_plot_title = paste(lead_SNP, geneSymbol, tissue)
-		RA_plot <- gg_regional_association_plink(eQTL_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(eQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
+        RA_plot <- gg_regional_association_plink(eQTL_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(eQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
+		#RA_plot <- gg_regional_association_plink(eQTL_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(eQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
 
 		pdf(file = paste0(lead_SNP, "_", geneSymbol, "_", tissue,".pdf"), paper = 'USr', width = 15, height = 20)  
 		print(RA_plot)
 		dev.off()
+
+    ################################ sQTL colocalization and RA Plots ################################  
 
 	} else if (qtlType == "sqtl") {
 		print("merging the trait and sqtl data on unique ID")
@@ -628,20 +656,21 @@ for(i in 1:nrow(eGenes)){
 
 			#generate regional association plot
 
-			#find lead SNP in 1KG if needed
-			if (SNPin1KG == TRUE){
+			#find lead SNP in LD reference if needed
+			if (SNPinLDref == TRUE){
 
 				print(lead_SNP)
 
 			} else {
 
-				print("lead SNP is not in 1KG so we need to find a different SNP for making the RA plots")
+				print("lead SNP is not in the provided LD reference, so we need to find a different SNP for making the RA plots")
 
 				find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, chromEnd_b38, pvalue_sQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, pval = trait_Pcol)
 				find_new_lead_SNP_df$chromosome = as.integer(gsub('[a-zA-Z]', '', find_new_lead_SNP_df$chromosome))
 
 				ld_clump_df <- find_new_lead_SNP_df %>%
-				ld_clump(bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", clump_kb = 500, clump_r2 = 0.2)
+				ld_clump(bfile = plink_bfile, plink_bin = "plink", clump_kb = clump_KB , clump_r2 = clump_R2)
+                #ld_clump(bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", clump_kb = 500, clump_r2 = 0.2)
 
 				lead_SNP <- as.character(ld_clump_df[which.min(ld_clump_df$pval),]$rsid)
 
@@ -656,7 +685,8 @@ for(i in 1:nrow(eGenes)){
 				#plot for trait 
 				trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, p_value = trait_Pcol)
 				trait_plot_title = paste(lead_SNP, trait)
-				RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
+                RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
+				#RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
 				pdf(file = paste0(lead_SNP, "_", trait,".pdf"), paper = 'USr', width = 15, height = 20)
 				print(RA_plot)
 				dev.off()
@@ -664,7 +694,8 @@ for(i in 1:nrow(eGenes)){
 				
 			sQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = chromEnd_b38, p_value = pvalue_sQTL)
 			sQTL_plot_title = paste(lead_SNP, geneSymbol, tissue)
-			RA_plot <- gg_regional_association_plink(sQTL_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(sQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
+            RA_plot <- gg_regional_association_plink(sQTL_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(sQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
+			#RA_plot <- gg_regional_association_plink(sQTL_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(sQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
 
 			pdf(file = paste0(lead_SNP, "_", geneSymbol, "_", intronID, "_", tissue,".pdf"), paper = 'USr', width = 15, height = 20)
 			print(RA_plot)

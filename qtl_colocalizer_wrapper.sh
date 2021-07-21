@@ -9,7 +9,25 @@ module load bedtools2
 
 echo "modules loaded"
 
-. qtl_config.sh
+#source the config file for this run (parameters such as GWAS file location and column names) and the setup config (paths to dependency files for the pipeline)
+source qtl_config.sh
+source $setup_config_sh
+
+#check for changes to the default plink parameters
+if [ "$clumpP1" == "" ]
+then
+    clumpP1=0.0000001
+fi
+
+if [ "$clumpKB" == "" ]
+then
+    clumpKB=1000
+fi
+
+if [ "$clumpP1" == "" ]
+then
+    clumpR2=0.2
+fi
 
 if [ "$leadSNPsFilePath" == "" ]
 then
@@ -19,7 +37,8 @@ then
     radius=`echo $((window/2))`
 
 	#Perform LD-clumping from GWAS summary statstics to  get clumps/loci of significant SNPs 
-	plink --noweb --bfile /project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed  --keep /project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink --clump-p1 .000001 --clump-r2 0.2  --clump-kb 1000 --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
+    plink --noweb --bfile $plink_bfile  --keep $plink_keep --clump-p1 $clumpP1 --clump-r2 $clumpR2  --clump-kb $clumpKB --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
+	#plink --noweb --bfile /project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed  --keep /project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink --clump-p1 .000001 --clump-r2 0.2  --clump-kb 1000 --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
 
 	awk '{OFS="\t"} (NR>1 && NF>0) {print "chr"$1,$4,$4+1,$3}' allChrMergedClumped.clumped | sort -k1,1 -k2,2n > allChrMergedClumped.bed
 
@@ -33,7 +52,7 @@ fi
 sed "s/TRAITNAME/$trait/" qtl_coloc_template.bsub > $trait"_template.bsub" 
 
 #Add fields from qtl_config.sh to QTL_config_template.R for trait
-sed "s/TRAITNAME/$trait/" QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/QTL/$qtlType/" > $trait"_QTL_config_template.R" 
+sed "s/TRAITNAME/$trait/" QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" > $trait"_QTL_config_template.R"
 
 #for each lead SNP
 cat $leadSNPsFilePath | while read line
