@@ -22,4 +22,10 @@ colocStart = STARTBP
 colocStop = STOPBP
 lead_SNP = "SNPNUMBER" 
 #"eqtl" or "sqtl"
-qtlType = "QTL" 
+qtlType = "QTLTYPE"
+#plink parameters
+clump_P1 = CLUMPP1
+clump_KB = CLUMPKB
+clump_R2 = CLUMPR2
+#config file with paths to the qtl data and plink files
+setup_config_R = "/project/voight_GWAS/wbone/qtl_colocalizer/eQTL_colocalizer/setup_config.R"
