@@ -15,8 +15,8 @@ library(org.Hs.eg.db)
 library(clusterProfiler)
 library(glue)
 library(vroom)
-library(BSgenome.Hsapiens.UCSC.hg19)
-#library(Homo.sapiens)
+#library(BSgenome.Hsapiens.UCSC.hg19)
+library(Homo.sapiens)
 library(ggbio)
 library(egg)
 
@@ -114,7 +114,6 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
     #rename the df to be more user friendly
     names(locus_snps_ld) <- c("lead_rsid","rsid", "r2", "color_code", "lead")
 
-
   #plot <- locus_snps %>%
     #left_join(locus_snps_ld) %>%
     #mutate(r2 = ifelse(is.na(r2) == TRUE, 0.1, r2)) %>%
@@ -129,6 +128,14 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
     mutate(color_code = as.character(cut(r2, breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), labels = c("blue4", "blue", "darkgreen", "orange", "red"), include.lowest = TRUE))) %>%
     mutate(color_code = ifelse(lead == TRUE, "purple", color_code))
 
+    #find the max of the recomb rate for scaling
+    maxlogP <- max(-log10(RA_plot_data$p_value))
+
+    #scale recomb for plotting with p-values
+    region_recomb$`Rate(cM/Mb)` <- region_recomb$`Rate(cM/Mb)` * (maxlogP/200)
+
+    rescale <- 1/(maxlogP/200)
+
     plot <- ggplot() +
   geom_point(data = RA_plot_data, mapping = aes(x = position / 1000000, y = -log10(p_value), fill = color_code, size = lead, alpha = lead, shape = lead)) +
   geom_line(data = region_recomb, mapping = aes(x= `Position(bp)`/ 1000000 , y = `Rate(cM/Mb)`)) +
@@ -137,8 +144,8 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
     scale_shape_manual(values = c(21, 23), guide = FALSE) +
     scale_alpha_manual(values = c(0.8, 1), guide = FALSE) +
     scale_x_continuous(n.breaks = 3) +
-    scale_y_continuous(name= expression(-log[10]("p-value")), sec.axis = sec_axis(~., name = expression(ln("(1 + Rate(cM/Mb))"))))+
-    guides(fill = guide_legend(override.aes = list(shape = 22, size = 8))) +
+    scale_y_continuous(name= expression(-log[10]("p-value")), sec.axis = sec_axis(~. * rescale, name = "Recomb Rate cM/Mb"))+
+    guides(fill = guide_legend(override.aes = list(shape = 22, size = 5))) +
     facet_wrap(~label, scales = "free", nrow = n_row) +
     labs(
       title = plot_title,
@@ -226,15 +233,15 @@ chrom_str <- paste0("chr",chrom, sep="")
 
 bps_in_region = colocStop - colocStart
 
-#grab the recombination rate data for this region
+#grab the recombination rate data for this region from 1KG recomb file
 recomb_file_path <- paste(recomb_rate_data,"-",chrom,"-final.txt.gz", sep="")
 chr_recomb <- vroom(recomb_file_path)
-region_recomb <- chr_recomb[chr_recomb$`Position(bp)` > colocStart & chr_recomb$`Position(bp)` < colocStop, ]
+region_recomb <- chr_recomb[chr_recomb$`Position(bp)` >= colocStart & chr_recomb$`Position(bp)` <= colocStop, ]
 
 #check if the lead_SNP is in the plink BIM file
 SNP_str <- paste('"\t',lead_SNP,'\t"',sep="")
 bim_file = paste(plink_bfile,".bim", sep ="")
-SNP_grep_str <- paste('grep','-P', SNP_str, bim_file, ".bim" ">", "leadSNP_test_file.txt" , sep=" " )
+SNP_grep_str <- paste('grep','-P', SNP_str, bim_file, ">", "leadSNP_test_file.txt" , sep=" " )
 #SNP_grep_str <- paste('grep','-P', SNP_str, "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref.bim", ">", "leadSNP_test_file.txt" , sep=" " )
 
 system(SNP_grep_str)
@@ -764,7 +771,7 @@ for(i in 1:nrow(eGenes)){
 
 				print("lead SNP is not in the provided LD reference, so we need to find a different SNP for making the RA plots")
 
-				find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, trait_BPcol, pvalue_sQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, pval = trait_Pcol)
+				find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom, trait_BPcol, pvalue_sQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, pval = trait_Pcol)
 				find_new_lead_SNP_df$chromosome = as.integer(gsub('[a-zA-Z]', '', find_new_lead_SNP_df$chromosome))
 
 				ld_clump_df <- find_new_lead_SNP_df %>%

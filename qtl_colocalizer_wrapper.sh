@@ -24,7 +24,7 @@ then
     clumpKB=1000
 fi
 
-if [ "$clumpP1" == "" ]
+if [ "$clumpR2" == "" ]
 then
     clumpR2=0.2
 fi
