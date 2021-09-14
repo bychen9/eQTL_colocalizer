@@ -11,7 +11,23 @@ module load liftOver
 
 echo "modules loaded"
 
-. qtl_config.sh
+source qtl_config.sh
+source $setup_config_sh
+
+if [ "$clumpP1" == "" ]
+then
+    clumpP1=0.0000001
+fi
+
+if [ "$clumpKB" == "" ]
+then
+    clumpKB=1000
+fi
+
+if [ "$clumpR2" == "" ]
+then
+    clumpR2=0.2
+fi
 
 if [ "$leadSNPsFilePath" == "" ]
 then
@@ -21,7 +37,7 @@ then
     radius=`echo $((window/2))`
 
 	#Perform LD-clumping from GWAS summary statstics to  get clumps/loci of significant SNPs 
-	plink --noweb --bfile /project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed  --keep /project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink --clump-p1 .000001 --clump-r2 0.2  --clump-kb 1000 --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
+	plink --noweb --bfile $plink_bfile  --keep $plink_keep --clump-p1 $clumpP1 --clump-r2 $clumpR2  --clump-kb $clumpKB --clump $traitFilePath --clump-snp-field $trait_SNPcol --clump-field $trait_Pcol --out allChrMergedClumped
 
 	awk '{OFS="\t"} (NR>1 && NF>0) {print "chr"$1,$4,$4+1,$3}' allChrMergedClumped.clumped | sort -k1,1 -k2,2n > allChrMergedClumped.bed
 

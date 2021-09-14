@@ -92,7 +92,7 @@ do
 	sed "s/SNPNUMBER/$SNP/" ../$trait"_QTL_config_template.R" | sed "s/CHROMOSOME/$CHR/" | sed "s/STARTBP/$Start/" | sed "s/STOPBP/$Stop/" > ./QTL_config.R
 
 	#fire off the bsub job for this lead SNP
-	bsub < $bsubfile -q voight_normal
+	bsub < $bsubfile -q $bsub_queue
 
 	#cd back into the main directory to go to the next SNP 
 	cd ..
@@ -108,4 +108,4 @@ echo "all lead SNP jobs have been submitted"
 sed -i "s/TRAITNAME/$trait/" summarize_results.bsub
 
 #run bsub to collect all of the COLOC results into 1 file
-bsub < summarize_results.bsub -q voight_normal
+bsub < summarize_results.bsub -q $bsub_queue
