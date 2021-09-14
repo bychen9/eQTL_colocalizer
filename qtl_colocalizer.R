@@ -184,13 +184,14 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
   return(plot)
 }
 
+#generate the gene tracks for the RA plots
 ggbio_genetrack <- function(chrom_str, BPStart, BPStop){
 
     gene_region <- GRanges(
 seqnames = Rle(c(chrom_str), c(1)),
 ranges = IRanges(BPStart:BPStop))
 
-    plot <- autoplot(Homo.sapiens, which = gene_region)
+    plot <- autoplot(Homo.sapiens, which = gene_region) + xlim(BPStart,BPStop) + scale_x_continuous(expand=c(0,0))
 
     #convert from ggbio to ggplot object
     plot <- plot@ggplot
