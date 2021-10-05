@@ -16,7 +16,7 @@ printf "SNP\tGene\tGeneID-Tissue\tTrait\tPPID\tPP\n" > $trait"_"$qtlType"_coloc_
 #go through each lead SNP directory
 for dir in ./rs*/
 do
-    echo $dir
+    #echo $dir
     dirname=`echo $dir | tr "/" "\t" | cut -f 2`
     echo $dirname
 
@@ -25,22 +25,15 @@ do
     #for each GTEx coloc output in the directory
     for colocOut in ./*coloc_results_summary.txt
     do
-        echo $colocOut
+        #echo $colocOut
         colocfilename=`basename $colocOut`
-        echo $colocfilename
+        #echo $colocfilename
 
         #save a "trait" string for formatting
         trait_str="_"$trait"_"
 
         #grab the information we need from the locus coloc results file
         sed "s/^/$colocfilename /" $colocOut | sed "s/^/$dirname /" | sed "s,$trait_str, $trait," | sed "s/coloc_results_summary.txt//" | sed "s/_ENSG/ ENSG/"| tr " " "\t" | tail -n+3 >> ../$trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
-
-        if [ "$qtlType" == "sqtl" ]
-        then
-
-           sed -i "s/_/\\t/" ../$trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
-
-        fi  
 
     done
 
@@ -52,10 +45,9 @@ done
 if [ "$qtlType" == "sqtl" ]
 then
 
-    sed -i "s/_/\\t/" ../$trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
+     sed -i "s/_/\\t/" $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
 
 fi
-
 
 #run Rscript to generate a file with PP3, PP4, and PP4/(PP3 + PP4) for each lead SNP-Gene-Tissue result.
 Rscript ./summarize_qtl_coloc_PP3_PP4_results.R $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
