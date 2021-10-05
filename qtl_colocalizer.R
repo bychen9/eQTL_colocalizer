@@ -636,7 +636,7 @@ for(i in 1:nrow(eGenes)){
 
 			print("lead SNP is not in the provided LD reference, so we need to find a different SNP for making the RA plots")
 
-			find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom, trait_BPcol, pvalue_eQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, pval = trait_Pcol)
+			find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, trait_BPcol, pvalue_eQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, pval = trait_Pcol)
 			find_new_lead_SNP_df$chromosome = as.integer(gsub('[a-zA-Z]', '', find_new_lead_SNP_df$chromosome)) 
 
 			ld_clump_df <- find_new_lead_SNP_df %>%
@@ -650,11 +650,11 @@ for(i in 1:nrow(eGenes)){
 
 		leadSNP_DF = colocInputFile#[colocInputFile$SNP == lead_SNP,]
 		leadSNP_DF$chrom_b38 = as.integer(gsub('[a-zA-Z]', '', leadSNP_DF$chrom_b38)) 
-		leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom, trait_BPcol, pvalue_eQTL, trait_Pcol)
+		leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom_b38, trait_BPcol, pvalue_eQTL, trait_Pcol)
 
 		if (i == 1) {
 			#plot trait data if it is the first time going through the loop	
-			trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom, position = trait_BPcol, p_value = trait_Pcol)
+			trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, p_value = trait_Pcol)
 			trait_plot_title = paste(lead_SNP, trait)
 
             RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""), region_recomb = region_recomb)
@@ -671,7 +671,7 @@ for(i in 1:nrow(eGenes)){
 			dev.off()
 		}
 
-		eQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom, position = trait_BPcol, p_value = pvalue_eQTL)
+		eQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, p_value = pvalue_eQTL)
 		eQTL_plot_title = paste(lead_SNP, geneSymbol, tissue)
         RA_plot <- gg_regional_association_plink(eQTL_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(eQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"), region_recomb = region_recomb)
 		#RA_plot <- gg_regional_association_plink(eQTL_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(eQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
@@ -772,7 +772,7 @@ for(i in 1:nrow(eGenes)){
 
 				print("lead SNP is not in the provided LD reference, so we need to find a different SNP for making the RA plots")
 
-				find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom, trait_BPcol, pvalue_sQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, pval = trait_Pcol)
+				find_new_lead_SNP_df <- colocInputFile %>% dplyr::select(SNP, chrom_b38, trait_BPcol, pvalue_sQTL, trait_Pcol) %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, pval = trait_Pcol)
 				find_new_lead_SNP_df$chromosome = as.integer(gsub('[a-zA-Z]', '', find_new_lead_SNP_df$chromosome))
 
 				ld_clump_df <- find_new_lead_SNP_df %>%
@@ -790,7 +790,7 @@ for(i in 1:nrow(eGenes)){
 
 			if (i == 1 && j == 1) {
 				#plot for trait 
-				trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom, position = trait_BPcol, p_value = trait_Pcol)
+				trait_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, p_value = trait_Pcol)
 				trait_plot_title = paste(lead_SNP, trait)
                 RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""), region_recomb = region_recomb)
 				#RA_plot <- gg_regional_association_plink(trait_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(trait_plot_title, "Regional Association Plot"), plot_subtitle = expression(""))
@@ -806,7 +806,7 @@ for(i in 1:nrow(eGenes)){
 				dev.off()
 			}
 				
-			sQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom, position = trait_BPcol, p_value = pvalue_sQTL)
+			sQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = chrom_b38, position = trait_BPcol, p_value = pvalue_sQTL)
 			sQTL_plot_title = paste(lead_SNP, geneSymbol, tissue)
             RA_plot <- gg_regional_association_plink(sQTL_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(sQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"), region_recomb = region_recomb)
 			#RA_plot <- gg_regional_association_plink(sQTL_leadSNP_DF, p_value_threshold = 5e-8, lead_snps = lead_SNP, bfile = "/project/voight_GWAS/wbone/NGWAMA/data_maf0.01_rs_ref/data_maf0.01_rs_ref", plink_bin = "plink", plot_title = paste(sQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"))
