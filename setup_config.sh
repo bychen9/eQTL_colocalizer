@@ -10,7 +10,7 @@ hash_table_dir="/project/voight_GWAS/bychen9/human_9606_b151_GRCh38p7/BED/hash_t
 #provide path to eqtl tissue table
 eQTL_tissue_table="/project/voight_GWAS/bychen9/eqtl_coloc/GTEx_v8_Tissue_Summary_with_filenames.csv"
 #provide path to sqtl tissue table
-sQTL_tissue_table="/project/voight_GWAS/bychen9/eqtl_coloc/GTEx_v8_Tissue_Summary_with_filenames.csv"
+sQTL_tissue_table="/project/voight_GWAS/bychen9/sqtl_coloc/GTEx_v8_sQTL_Tissue_Summary_with_filenames.csv"
 #provide path to significant eqtl data tabix director NOTE: don't include last slashy
 eQTL_sig_qtl_tabix_dir="/project/voight_datasets/GTEx_v8/eQTL/GTEx_Analysis_v8_eQTL_tabix"
 #provide path to the all eqtl data tabix directory
@@ -24,4 +24,4 @@ liftOver_chain="/appl/liftOver-20180423/chains/hg19ToHg38.over.chain"
 #path to recombination rate directory (expected to b 1K genmoe chromosome recombination rate files or in the same format as these files: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates/
 recomb_rate_data="/project/voight_GWAS/wbone/recomb_data_dir/CEU/CEU"
 #name of LSF queue you would like to submit your jobs to
-bsub_queue="voight_normal"
+bsub_queue="voight_long"
