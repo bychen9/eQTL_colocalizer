@@ -1,11 +1,14 @@
+#!/bin/bash
 #Code to collect the QTL colocalization results after they have all been generated.
 
 #set variables for date and time
 today=`date +%F`
 now=`date +%T`
 
+pwd
+
 #load config file
-. qtl_config.sh
+source qtl_config.sh
 
 #write header to the summary results file
 printf "SNP\tGene\tGeneID-Tissue\tTrait\tPPID\tPP\n" > $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt" 
@@ -13,7 +16,7 @@ printf "SNP\tGene\tGeneID-Tissue\tTrait\tPPID\tPP\n" > $trait"_"$qtlType"_coloc_
 #go through each lead SNP directory
 for dir in ./rs*/
 do
-    echo $dir
+    #echo $dir
     dirname=`echo $dir | tr "/" "\t" | cut -f 2`
     echo $dirname
 
@@ -22,9 +25,9 @@ do
     #for each GTEx coloc output in the directory
     for colocOut in ./*coloc_results_summary.txt
     do
-        echo $colocOut
+        #echo $colocOut
         colocfilename=`basename $colocOut`
-        echo $colocfilename
+        #echo $colocfilename
 
         #save a "trait" string for formatting
         trait_str="_"$trait"_"
@@ -38,10 +41,11 @@ do
 
 done
 
+#if using sQTL data you need to parse out the gene name
 if [ "$qtlType" == "sqtl" ]
 then
 
-     sed -i "s/_/\\t/" ../$trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
+     sed -i "s/_/\\t/" $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
 
 fi
 
