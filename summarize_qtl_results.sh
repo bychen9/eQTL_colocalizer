@@ -48,6 +48,15 @@ do
 
 done
 
+#if using sQTL data you need to parse out the gene name
+if [ "$qtlType" == "sqtl" ]
+then
+
+    sed -i "s/_/\\t/" ../$trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
+
+fi
+
+
 #run Rscript to generate a file with PP3, PP4, and PP4/(PP3 + PP4) for each lead SNP-Gene-Tissue result.
 Rscript ./summarize_qtl_coloc_PP3_PP4_results.R $trait"_"$qtlType"_coloc_results_all_summary_"$today"_"$now".txt"
 
