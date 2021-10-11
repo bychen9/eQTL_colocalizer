@@ -786,7 +786,7 @@ for(i in 1:nrow(eGenes)){
 
 			leadSNP_DF = colocInputFile#[colocInputFile$SNP == lead_SNP,]
 			leadSNP_DF$chrom_b38 = as.integer(gsub('[a-zA-Z]', '', leadSNP_DF$chrom_b38))
-			leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom, trait_BPcol, pvalue_sQTL, trait_Pcol)
+			leadSNP_DF = leadSNP_DF %>% dplyr::select(SNP, chrom_b38, trait_BPcol, pvalue_sQTL, trait_Pcol)
 
 			if (i == 1 && j == 1) {
 				#plot for trait 
