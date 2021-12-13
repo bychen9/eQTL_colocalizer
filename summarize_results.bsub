@@ -1,10 +1,10 @@
 #Run cod to collect the QTL colocalization results after they have all been generated.
-#BSUB -J summarize_qlt_results
-#BSUB -o TRAITNAME_GTEx_COLOC_Results_Summary.%J-%I.out
-#BSUB -e TRAITNAME_GTEx_COLOC_Results_Summary.%J-%I.err
+#BSUB -J summarize_qtl_results
+#BSUB -o TRAITNAME_COLOC_Results_Summary.%J-%I.out
+#BSUB -e TRAITNAME_COLOC_Results_Summary.%J-%I.err
 #BSUB -N
-#BSUB -w done(GTEx_coloc)
+#BSUB -w done(ColocQuiaL)
 
 module load R/3.6.3
 
-./summarize_qtl_results.sh
+/project/voight_GWAS/bychen9/eQTL_colocalizer/summarize_qtl_results.sh
