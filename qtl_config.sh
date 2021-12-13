@@ -18,6 +18,8 @@ traitType="cc"
 traitProp=0.536671 #look this up
 #path to lead SNPs file, set as empty string to use plink to identify lead SNPs from the GWAS summary stat file
 leadSNPsFilePath=""
+#reference genome build of SNPs in lead SNPs file, either "hg19" or "hg38"
+build="hg19"
 #qtlType is set to "eqtl" or "sqtl"
 qtlType="eqtl"
 #colc window size in bps, this is only required when no leadSNPsFilePath is set. If you are providing a leadSNPsFile leave the empty string field for window
@@ -28,7 +30,7 @@ clumpKB=""
 clumpR2=""
 
 #provide path to the setup_config.sh (this is the config file with all of the file paths to dependency files such as plink reference files, GTEx eQTL data, etc.
-setup_config_sh="/project/voight_GWAS/wbone/qtl_colocalizer/eQTL_colocalizer/setup_config.sh"
+setup_config_sh="/project/voight_GWAS/bychen9/eQTL_colocalizer/setup_config.sh"
 #provide the path to plink refernce files to be used for plink commands
 #plink_bfile="/project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed"
 #provide the path to the plink ped files for the list of individuals you wish to use in your LD reference panel
