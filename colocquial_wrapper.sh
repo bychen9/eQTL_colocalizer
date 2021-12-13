@@ -1,13 +1,15 @@
 #!/bin/bash
-# Runs qtl_colocalizer.R
+# Runs colocquial.R 
 #This version is designed to use an LSF job submission to parallelize the coloc jobs
-# Input files needed in directory: qtl_config.sh (modified), qtl_coloc_template.bsub, QTL_config_template.R, qtl_colocalizer.R
+# Input files needed in directory: qtl_config.sh (modified), qtl_coloc_template.bsub, summarize_results.bsub
 
 module load plink/1.90Beta4.5
 module load R/3.6.3
 module load bedtools2
 
 echo "modules loaded"
+
+colocquial_dir="/project/voight_GWAS/bychen9/eQTL_colocalizer"
 
 #source the config file for this run (parameters such as GWAS file location and column names) and the setup config (paths to dependency files for the pipeline)
 source qtl_config.sh
@@ -52,7 +54,7 @@ fi
 sed "s/TRAITNAME/$trait/" qtl_coloc_template.bsub > $trait"_template.bsub" 
 
 #Add fields from qtl_config.sh to QTL_config_template.R for trait
-sed "s/TRAITNAME/$trait/" QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/BUILD/$build/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" > $trait"_QTL_config_template.R"
+sed "s/TRAITNAME/$trait/" $colocquial_dir/QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/BUILD/$build/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" > $trait"_QTL_config_template.R"
 
 #for each lead SNP
 cat $leadSNPsFilePath | while read line
@@ -79,8 +81,8 @@ do
 	#cd into the dir
 	cd $SNP
 
-	#copy the qtl_colocalizer.R file into the dir
-	cp ../qtl_colocalizer.R ./
+	#copy the colocquial.R file into the dir
+	cp $colocquial_dir/colocquial.R ./
 
 	#add an edited version of the bsub file to the dir
 	sed "s/SNPNUMBER/$SNP/" ../$trait"_template.bsub" > ./$SNP".bsub"
@@ -105,7 +107,7 @@ done
 echo "all lead SNP jobs have been submitted"
 
 #replace "TRAITNAME" with the $trait in out and err file names for summary file bsub
-sed -i "s/TRAITNAME/$trait/" summarize_results.bsub
+sed "s/TRAITNAME/$trait/" $colocquial_dir/summarize_results.bsub > summarize_results.bsub
 
 #run bsub to collect all of the COLOC results into 1 file
 bsub < summarize_results.bsub -q $bsub_queue
