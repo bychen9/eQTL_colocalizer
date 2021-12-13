@@ -11,4 +11,4 @@ module load plink/1.90Beta4.5
 module load tabix
 module load liftOver
 
-Rscript ./qtl_colocalizer.R
+Rscript ./colocquial.R

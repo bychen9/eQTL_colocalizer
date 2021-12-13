@@ -52,7 +52,7 @@ fi
 sed "s/TRAITNAME/$trait/" qtl_coloc_template.bsub > $trait"_template.bsub" 
 
 #Add fields from qtl_config.sh to QTL_config_template.R for trait
-sed "s/TRAITNAME/$trait/" QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" > $trait"_QTL_config_template.R"
+sed "s/TRAITNAME/$trait/" QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/BUILD/$build/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" > $trait"_QTL_config_template.R"
 
 #for each lead SNP
 cat $leadSNPsFilePath | while read line
