@@ -1,23 +1,23 @@
 #ID for user's trait of interest. (Can be any string)
-trait="BRCAN"
+trait="T2D"
 #path to the input files
-traitFilePath="/project/voight_datasets/GWAS/18_brcan/icogs_onco_gwas_meta_overall_breast_cancer_summary_level_statistics_jun20_withrsIDs.txt"
+traitFilePath="/project/voight_GWAS/wbone/CHD_T2D_2020_bivariate_scan/T2D_Vujkovic_et_al_dbSNP150_onlySNPs_data.txt"
 #column IDs from trait file
-trait_A1col="Effect.Gwas"
-trait_A2col="Baseline.Gwas"
-trait_SNPcol="rsid"
-trait_CHRcol="chr.iCOGs"
-trait_BPcol="Position.iCOGs"
-trait_Pcol="P.value.Gwas" 
-trait_Ncol="NumCalled.iCOGs" 
-trait_MAFcol="Freq.Gwas"
+trait_A1col="EA"
+trait_A2col="NEA"
+trait_SNPcol="name"
+trait_CHRcol="CHR"
+trait_BPcol="POS"
+trait_Pcol="P" 
+trait_Ncol="N" 
+trait_MAFcol="EAF"
 #trait info not in the input file
 #traitType is set either to "cc" or "quant"
 traitType="cc"
 #This is the proportion of samples that are cases in a case control GWAS, if you are using a quantitative trait this should be set to "". traitProp = cases / case + controls
-traitProp=0.536671 #look this up
+traitProp=0.162369 #look this up
 #path to lead SNPs file, set as empty string to use plink to identify lead SNPs from the GWAS summary stat file
-leadSNPsFilePath=""
+leadSNPsFilePath="/project/voight_GWAS/bychen9/T2D/T2D_DIAMANTE_Lead_SNPs_rsID_file_20211022.txt"
 #reference genome build of SNPs in lead SNPs file, either "hg19" or "hg38"
 build="hg19"
 #qtlType is set to "eqtl" or "sqtl"
@@ -29,8 +29,10 @@ clumpP1=""
 clumpKB=""
 clumpR2=""
 
-#provide path to the setup_config.sh (this is the config file with all of the file paths to dependency files such as plink reference files, GTEx eQTL data, etc.
+#provide path to the desired setup_config.sh file (this is the config file with all of the file paths to dependency files such as plink reference files, GTEx eQTL data, etc.)
 setup_config_sh="/project/voight_GWAS/bychen9/eQTL_colocalizer/setup_config.sh"
+#provide path to the desired setup_config.R file
+setup_config_R="/project/voight_GWAS/bychen9/eQTL_colocalizer/setup_config.R"
 #provide the path to plink refernce files to be used for plink commands
 #plink_bfile="/project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed"
 #provide the path to the plink ped files for the list of individuals you wish to use in your LD reference panel

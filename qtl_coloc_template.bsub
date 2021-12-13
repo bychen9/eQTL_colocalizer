@@ -1,7 +1,7 @@
-#Run Coloc on all of the GTEx Tissue-gene pairs from the downloaded CSV
-#BSUB -J GTEx_coloc
-#BSUB -o SNPNUMBER_TRAITNAME_GTEx_COLOC.%J-%I.out
-#BSUB -e SNPNUMBER_TRAITNAME_GTEx_COLOC.%J-%I.err
+#Run Coloc on all of the Tissue-gene pairs from the CSV
+#BSUB -J ColocQuiaL 
+#BSUB -o SNPNUMBER_TRAITNAME_COLOC.%J-%I.out
+#BSUB -e SNPNUMBER_TRAITNAME_COLOC.%J-%I.err
 #Send email notification when the job finishes
 #BSUB -N
 ## otherwise, summary is written to the output file.

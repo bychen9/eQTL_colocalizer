@@ -1,7 +1,7 @@
 #!/bin/bash
 # Runs colocquial.R 
 #This version is designed to use an LSF job submission to parallelize the coloc jobs
-# Input files needed in directory: qtl_config.sh (modified), qtl_coloc_template.bsub, summarize_results.bsub
+# Input files needed in directory: qtl_config.sh (modified) 
 
 module load plink/1.90Beta4.5
 module load R/3.6.3
@@ -51,10 +51,10 @@ then
 fi
 
 #create bsub template for trait
-sed "s/TRAITNAME/$trait/" qtl_coloc_template.bsub > $trait"_template.bsub" 
+sed "s/TRAITNAME/$trait/" $colocquial_dir/qtl_coloc_template.bsub > $trait"_template.bsub" 
 
 #Add fields from qtl_config.sh to QTL_config_template.R for trait
-sed "s/TRAITNAME/$trait/" $colocquial_dir/QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/BUILD/$build/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" > $trait"_QTL_config_template.R"
+sed "s/TRAITNAME/$trait/" $colocquial_dir/QTL_config_template.R | sed "s|TRAITPATH|$traitFilePath|" | sed "s/A1COL/$trait_A1col/" | sed "s/A2COL/$trait_A2col/" | sed "s/SNPCOL/$trait_SNPcol/" | sed "s/CHRCOL/$trait_CHRcol/" | sed "s/BPCOL/$trait_BPcol/" | sed "s/PCOL/$trait_Pcol/" | sed "s/NCOL/$trait_Ncol/" | sed "s/MAFCOL/$trait_MAFcol/" | sed "s/TRAITTYPE/$traitType/" | sed "s/TRAITPROP/$traitProp/" | sed "s/BUILD/$build/" | sed "s/QTLTYPE/$qtlType/" | sed "s/CLUMPP1/$clumpP1/" | sed "s/CLUMPKB/$clumpKB/" | sed "s/CLUMPR2/$clumpR2/" | sed "s:SETUPCONFIGR:$setup_config_R:" > $trait"_QTL_config_template.R"
 
 #for each lead SNP
 cat $leadSNPsFilePath | while read line
