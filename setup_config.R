@@ -39,8 +39,17 @@ sQTL_sig_geneID_col = 12
 
 #provide path to the all sqtl data tabix directory
 sQTL_all_qtl_tabix_dir = "/project/voight_viz/bychen9/sQTL_tabix/"
-#prove the header to the sqtl data
+#provide the header to the sqtl data
 sQTL_all_header = c("chrom_b38", "chromStart_b38", "chromEnd_b38", "eGeneID", "intron_chr", "intron_bp_first", "intron_bp_end", "intron_clu", "A1_sqtl", "A2_sqtl", "build", "tss_distance", "ma_samples", "ma_count", "maf", "pvalue_sQTL", "slope", "slope_se")
+#name of column in header representing geneID
+sQTL_all_geneID = "eGeneID" 
+#name of column in header representing chromosome
+sQTL_all_chrom = "chrom_b38"
+#name of column in header representing end coordinate 
+sQTL_all_chromEnd = "chromEnd_b38"
+#name of column in header representing p-value
+sQTL_all_pvalue = "pvalue_sQTL"
+
 
 #path to GRCh37 to GRCh38 liftOver chain file
 liftOver_chain = "/appl/liftOver-20180423/chains/hg19ToHg38.over.chain"
