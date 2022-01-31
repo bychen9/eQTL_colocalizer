@@ -50,7 +50,6 @@ sQTL_all_chromEnd = "chromEnd_b38"
 #name of column in header representing p-value
 sQTL_all_pvalue = "pvalue_sQTL"
 
-
 #path to GRCh37 to GRCh38 liftOver chain file
 liftOver_chain = "/appl/liftOver-20180423/chains/hg19ToHg38.over.chain"
 #path to recombination rate directory (expected to b 1K genmoe chromosome recombination rate files or in the same format as these files: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates/
