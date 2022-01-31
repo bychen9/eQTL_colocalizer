@@ -322,8 +322,8 @@ tissueTable$Tissue = tissueTable_tissue_noSpace
 #create csv file from significant pair files
 lead_SNP_pos = hash_table[[lead_SNP]]
 #convert format for tabix
-lead_SNP_pos_tabix_with_chr = paste0(gsub("chr", "", gsub("_",":",lead_SNP_pos)), "-", gsub("^.*?_","",lead_SNP_pos))
-lead_SNP_pos_tabix_without_chr = paste0(gsub("_",":",lead_SNP_pos), "-", gsub("^.*?_","",lead_SNP_pos))
+lead_SNP_pos_tabix_with_chr = paste0(gsub("_",":",lead_SNP_pos), "-", gsub("^.*?_","",lead_SNP_pos))
+lead_SNP_pos_tabix_without_chr = paste0(gsub("chr", "", gsub("_",":",lead_SNP_pos)), "-", gsub("^.*?_","",lead_SNP_pos))
 
 for (i in 1:nrow(tissueTable)) {
 	sigpair_filename = tissueTable$sigPairsTabixFilename[i]
@@ -497,7 +497,11 @@ for(i in 1:nrow(eGenes)){
 
     print("Filtering on the geneID")
     #filter for the geneID of interest
-	eGeneTissue_region = eGeneTissueInput[eGeneTissueInput[[eQTL_all_geneID]] == geneID,]
+	if (qtlType == "eqtl") {
+		eGeneTissue_region = eGeneTissueInput[eGeneTissueInput[[eQTL_all_geneID]] == geneID,]
+	} else if (qtlType == "sqtl") {
+		eGeneTissue_region = eGeneTissueInput[eGeneTissueInput[[sQTL_all_geneID]] == geneID,]
+	}
 
     if (nrow(eGeneTissue_region) == 0) {
       print("Warning: There was not an exact match on Ensembl ID. Likely this is due to a GTEX version  update.")
@@ -508,11 +512,19 @@ for(i in 1:nrow(eGenes)){
       #eGeneTissue_region = eGeneTissueInput[eGeneTissueInput$chromEnd >= colocStart & eGeneTissueInput$chromEnd <= colocStop,]
 	  eGeneTissue_region = eGeneTissueInput
   
-      #grep the simplified Ensembl ID
-      possible_Ensembl_gene_lines <- eGeneTissue_region[grepl(noDecimalGeneID, eGeneTissue_region[[eQTL_all_geneID]]),]
-  
-      #check to make sure there is just one other Ensembl ID
-	  possible_Ensembl_genes <- unique(possible_Ensembl_gene_lines[[eQTL_all_geneID]])
+	  if (qtlType == "eqtl") {
+        #grep the simplified Ensembl ID
+		possible_Ensembl_gene_lines <- eGeneTissue_region[grepl(noDecimalGeneID, eGeneTissue_region[[eQTL_all_geneID]]),]
+
+        #check to make sure there is just one other Ensembl ID
+	    possible_Ensembl_genes <- unique(possible_Ensembl_gene_lines[[eQTL_all_geneID]])
+      } else if (qtlType == "sqtl") {
+        #grep the simplified Ensembl ID
+		possible_Ensembl_gene_lines <- eGeneTissue_region[grepl(noDecimalGeneID, eGeneTissue_region[[sQTL_all_geneID]]),]
+
+        #check to make sure there is just one other Ensembl ID
+	    possible_Ensembl_genes <- unique(possible_Ensembl_gene_lines[[sQTL_all_geneID]])
+	  }
   
       if(length(possible_Ensembl_genes) == 1){
         print("Found a unique Ensembl ID so this analysis will continue using the Ensembl ID:")
@@ -520,8 +532,11 @@ for(i in 1:nrow(eGenes)){
     
         #this will be a single Ensembl ID string
         geneID = possible_Ensembl_genes
-		eGeneTissue_region = eGeneTissue_region[eGeneTissue_region[[eQTL_all_geneID]] == geneID,]
-
+	    if (qtlType == "eqtl") {	
+			eGeneTissue_region = eGeneTissue_region[eGeneTissue_region[[eQTL_all_geneID]] == geneID,]
+		} else if (qtlType == "sqtl") {
+			eGeneTissue_region = eGeneTissue_region[eGeneTissue_region[[sQTL_all_geneID]] == geneID,]
+		}
       } else {
         print("The Ensembl ID from your GTEx csv was not able to be reliably mapped to an Enseml ID in the GTEx database, so this gene will be skipped:")
         print(geneID)
@@ -529,15 +544,31 @@ for(i in 1:nrow(eGenes)){
       }    
     }
 
+	if (qtlType == "eqtl") {
+		#Keep only the columns that are needed
+		eGeneTissue_region <- eGeneTissue_region %>% dplyr::select(all_of(eQTL_all_chrom), all_of(eQTL_all_chromEnd), all_of(eQTL_all_geneID), all_of(eQTL_all_pvalue))
 
-    print("adding rs numbers to the eQTL data")
-    #add rs genegene,,numbers to the eGeneTissue_region DF
+		print("adding rs numbers to the eQTL data")
+		#add rs genegene,,numbers to the eGeneTissue_region DF
 
-	#Add "chr" prefix to chromosome number if not present
-	eGeneTissue_region[[eQTL_all_chrom]] = paste0("chr", sub("chr", "", eGeneTissue_region[[eQTL_all_chrom]]))
+		#Add "chr" prefix to chromosome number if not present
+		eGeneTissue_region[[eQTL_all_chrom]] = paste0("chr", sub("chr", "", eGeneTissue_region[[eQTL_all_chrom]]))
 
-	#make chromosome_position column for merging
-	eGeneTissue_region$chromosome_position <- paste(eGeneTissue_region[[eQTL_all_chrom]],eGeneTissue_region[[eQTL_all_chromEnd]],sep="_")
+		#make chromosome_position column for merging
+		eGeneTissue_region$chromosome_position <- paste(eGeneTissue_region[[eQTL_all_chrom]],eGeneTissue_region[[eQTL_all_chromEnd]],sep="_")
+	} else if (qtlType == "sqtl") {
+		#Keep only the columns that are needed
+		eGeneTissue_region <- eGeneTissue_region %>% dplyr::select(all_of(sQTL_all_chrom), all_of(sQTL_all_chromEnd), all_of(sQTL_all_geneID), all_of(sQTL_all_pvalue))
+
+		print("adding rs numbers to the sQTL data")
+		#add rs genegene,,numbers to the eGeneTissue_region DF
+
+		#Add "chr" prefix to chromosome number if not present
+		eGeneTissue_region[[sQTL_all_chrom]] = paste0("chr", sub("chr", "", eGeneTissue_region[[sQTL_all_chrom]]))
+
+		#make chromosome_position column for merging
+		eGeneTissue_region$chromosome_position <- paste(eGeneTissue_region[[sQTL_all_chrom]],eGeneTissue_region[[sQTL_all_chromEnd]],sep="_")
+	}
 
     #create data frame with rs numbers associated with chromosome_position and add to eGeneTissue region
     uniqID_DF = as.data.frame(t(as.data.frame(trait_chrom_pos)))
