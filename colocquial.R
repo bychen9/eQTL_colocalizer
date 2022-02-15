@@ -229,6 +229,32 @@ print(lead_SNP)
 print("QTL type:")
 print(qtlType)
 
+# Set up QTL variables for either eQTL or sQTL
+if (qtlType == "eqtl") {
+	sig_qtl_tabix_dir = eQTL_sig_qtl_tabix_dir
+	sig_geneID_col = eQTL_sig_geneID_col
+	all_qtl_tabix_dir = eQTL_all_qtl_tabix_dir
+	all_header = eQTL_all_header
+	all_geneID = eQTL_all_geneID
+	all_chrom = eQTL_all_chrom
+	all_chromEnd = eQTL_all_chromEnd
+	all_pvalue = eQTL_all_pvalue
+	QTL_tissue_table = eQTL_tissue_table
+} else if (qtlType == "sqtl") {
+	sig_qtl_tabix_dir = sQTL_sig_qtl_tabix_dir
+	sig_geneID_col = sQTL_sig_geneID_col
+	all_qtl_tabix_dir = sQTL_all_qtl_tabix_dir
+	all_header = sQTL_all_header
+	all_geneID = sQTL_all_geneID
+	all_chrom = sQTL_all_chrom
+	all_chromEnd = sQTL_all_chromEnd
+	all_pvalue = sQTL_all_pvalue
+	QTL_tissue_table = sQTL_tissue_table
+} else {
+	print("ERROR: Please specify qtlType: \"eqtl\" or \"sqtl\"")
+    quit()
+}
+
 #some libraries require the "chr" at the beginning of the chromosome
 chrom_str <- paste0("chr",chrom, sep="")
 
@@ -297,15 +323,8 @@ trait_chrom_pos = hash_table[trait_region_rs]
 trait_chrom_pos = trait_chrom_pos[!sapply(trait_chrom_pos,is.null)]
 head(trait_chrom_pos, 3)
 
-#read in tissue table from ssetup_config.R
-if (qtlType == "eqtl") {
-    tissueTable = read.table(file=eQTL_tissue_table, sep=",", header=TRUE)
-} else if (qtlType == "sqtl") {
-    tissueTable = read.table(file=sQTL_tissue_table, sep=",", header=TRUE)
-} else {
-    print("ERROR: Please specify qtlType: \"eqtl\" or \"sqtl\"")
-    quit()
-}
+#read in tissue table from setup_config.R
+tissueTable = read.table(file=QTL_tissue_table, sep=",", header=TRUE)
 
 #Convert to strings from factors
 tissueTable$Tissue = as.character(tissueTable$Tissue)
@@ -332,11 +351,7 @@ for (i in 1:nrow(tissueTable)) {
 		next
 	}
 
-	if (qtlType == "eqtl") {
-		file = paste0(eQTL_sig_qtl_tabix_dir, "/", sigpair_filename) 
-	} else if (qtlType == "sqtl") {
-		file = paste0(sQTL_sig_qtl_tabix_dir, "/", sigpair_filename) 
-	}
+	file = paste0(sig_qtl_tabix_dir, "/", sigpair_filename) 
 
 	system(paste("tabix", file, lead_SNP_pos_tabix_with_chr, ">", paste0(lead_SNP, "_temp.csv"))) 
 	system(paste("tabix", file, lead_SNP_pos_tabix_without_chr, ">>", paste0(lead_SNP, "_temp.csv"))) 
@@ -353,14 +368,9 @@ eGenes = tryCatch({
 	quit(status=0)
 })
 
-
 #loop through the eGene-Tissue pairs in eGenes and prep running COLOC
 for(i in 1:nrow(eGenes)){
-	if (qtlType == "eqtl") {
-		geneID <- eGenes[i, eQTL_sig_geneID_col]
-	} else if (qtlType == "sqtl") {
-		geneID <- eGenes[i, sQTL_sig_geneID_col]
-	}
+	geneID <- eGenes[i, sig_geneID_col]
 	
     geneID_noDOT <-  gsub("\\..*","", geneID)
 
@@ -401,11 +411,7 @@ for(i in 1:nrow(eGenes)){
         next
     }
     
-	if (qtlType == "eqtl") {
-        tabix_allpair_path = paste0(eQTL_all_qtl_tabix_dir, allpair_filename)
-	} else if (qtlType == "sqtl") {
-        tabix_allpair_path = paste0(sQTL_all_qtl_tabix_dir, allpair_filename)
-	}
+	tabix_allpair_path = paste0(all_qtl_tabix_dir, allpair_filename)
     qtl_N <- tissueLine$NumberRNASeqandGTSamples
 
     #parentheses are causing issues too
@@ -453,8 +459,7 @@ for(i in 1:nrow(eGenes)){
 		}
 	}
 
-
-    print("Grabbing the all pairs data")    
+	print("Grabbing the all pairs data")    
     #Use tabix to grab data, try both with and without "chr"
 	eGeneTissueInputFile = paste(geneSymbol,tissue_noSpace,chrom,colocStart,colocStop,".txt", sep="_")
 	if (build == "hg38") {
@@ -468,7 +473,6 @@ for(i in 1:nrow(eGenes)){
 		quit()
 	}
 	
-
     print("reading the all pairs data into R")
     #read the file we just generated from the grep command into R
     eGeneTissueInput = fread(file = eGeneTissueInputFile, header=FALSE)
@@ -487,88 +491,57 @@ for(i in 1:nrow(eGenes)){
     #remove the eGeneTissueInputFile after has been read into R to save disk space
     system(paste0("rm ", eGeneTissueInputFile, sep=""))
 
-	if (qtlType == "eqtl") {
-		colnames(eGeneTissueInput) = eQTL_all_header
-	} else if (qtlType == "sqtl") {
-		colnames(eGeneTissueInput) = sQTL_all_header
-    }
-	
-	#colnames(eGeneTissueInput) = header
+	colnames(eGeneTissueInput) = all_header
 
     print("Filtering on the geneID")
     #filter for the geneID of interest
-	if (qtlType == "eqtl") {
-		eGeneTissue_region = eGeneTissueInput[eGeneTissueInput[[eQTL_all_geneID]] == geneID,]
-	} else if (qtlType == "sqtl") {
-		eGeneTissue_region = eGeneTissueInput[eGeneTissueInput[[sQTL_all_geneID]] == geneID,]
-	}
+	eGeneTissue_region = eGeneTissueInput[eGeneTissueInput[[all_geneID]] == geneID,]
 
     if (nrow(eGeneTissue_region) == 0) {
-      print("Warning: There was not an exact match on Ensembl ID. Likely this is due to a GTEX version  update.")
-      #make a string that removes the everything after in the geneID
-      noDecimalGeneID = gsub("\\..*","",geneID)
+    	print("Warning: There was not an exact match on Ensembl ID. Likely this is due to a GTEX version  update.")
+      	#make a string that removes the everything after in the geneID
+      	noDecimalGeneID = gsub("\\..*","",geneID)
   
-      #recreated eGeneTissue_region
-      #eGeneTissue_region = eGeneTissueInput[eGeneTissueInput$chromEnd >= colocStart & eGeneTissueInput$chromEnd <= colocStop,]
-	  eGeneTissue_region = eGeneTissueInput
-  
-	  if (qtlType == "eqtl") {
-        #grep the simplified Ensembl ID
-		possible_Ensembl_gene_lines <- eGeneTissue_region[grepl(noDecimalGeneID, eGeneTissue_region[[eQTL_all_geneID]]),]
+      	#recreated eGeneTissue_region
+      	#eGeneTissue_region = eGeneTissueInput[eGeneTissueInput$chromEnd >= colocStart & eGeneTissueInput$chromEnd <= colocStop,]
+	  	eGeneTissue_region = eGeneTissueInput
+
+	  	#grep the simplified Ensembl ID
+		possible_Ensembl_gene_lines <- eGeneTissue_region[grepl(noDecimalGeneID, eGeneTissue_region[[all_geneID]]),]
 
         #check to make sure there is just one other Ensembl ID
-	    possible_Ensembl_genes <- unique(possible_Ensembl_gene_lines[[eQTL_all_geneID]])
-      } else if (qtlType == "sqtl") {
-        #grep the simplified Ensembl ID
-		possible_Ensembl_gene_lines <- eGeneTissue_region[grepl(noDecimalGeneID, eGeneTissue_region[[sQTL_all_geneID]]),]
-
-        #check to make sure there is just one other Ensembl ID
-	    possible_Ensembl_genes <- unique(possible_Ensembl_gene_lines[[sQTL_all_geneID]])
-	  }
+	    possible_Ensembl_genes <- unique(possible_Ensembl_gene_lines[[all_geneID]])
   
-      if(length(possible_Ensembl_genes) == 1){
-        print("Found a unique Ensembl ID so this analysis will continue using the Ensembl ID:")
-        print(possible_Ensembl_genes)
+    	if(length(possible_Ensembl_genes) == 1){
+        	print("Found a unique Ensembl ID so this analysis will continue using the Ensembl ID:")
+        	print(possible_Ensembl_genes)
     
-        #this will be a single Ensembl ID string
-        geneID = possible_Ensembl_genes
-	    if (qtlType == "eqtl") {	
-			eGeneTissue_region = eGeneTissue_region[eGeneTissue_region[[eQTL_all_geneID]] == geneID,]
-		} else if (qtlType == "sqtl") {
-			eGeneTissue_region = eGeneTissue_region[eGeneTissue_region[[sQTL_all_geneID]] == geneID,]
-		}
-      } else {
-        print("The Ensembl ID from your GTEx csv was not able to be reliably mapped to an Enseml ID in the GTEx database, so this gene will be skipped:")
-        print(geneID)
-        next
-      }    
+        	#this will be a single Ensembl ID string
+        	geneID = possible_Ensembl_genes
+			eGeneTissue_region = eGeneTissue_region[eGeneTissue_region[[all_geneID]] == geneID,]
+      	} else {
+        	print("The Ensembl ID from your GTEx csv was not able to be reliably mapped to an Enseml ID in the GTEx database, so this gene will be skipped:")
+        	print(geneID)
+        	next
+      	}    
     }
 
 	if (qtlType == "eqtl") {
 		#Keep only the columns that are needed
 		eGeneTissue_region <- eGeneTissue_region %>% dplyr::select(all_of(eQTL_all_chrom), all_of(eQTL_all_chromEnd), all_of(eQTL_all_geneID), all_of(eQTL_all_pvalue))
-
-		print("adding rs numbers to the eQTL data")
-		#add rs genegene,,numbers to the eGeneTissue_region DF
-
-		#Add "chr" prefix to chromosome number if not present
-		eGeneTissue_region[[eQTL_all_chrom]] = paste0("chr", sub("chr", "", eGeneTissue_region[[eQTL_all_chrom]]))
-
-		#make chromosome_position column for merging
-		eGeneTissue_region$chromosome_position <- paste(eGeneTissue_region[[eQTL_all_chrom]],eGeneTissue_region[[eQTL_all_chromEnd]],sep="_")
 	} else if (qtlType == "sqtl") {
 		#Keep only the columns that are needed
-		eGeneTissue_region <- eGeneTissue_region %>% dplyr::select(all_of(sQTL_all_chrom), all_of(sQTL_all_chromEnd), all_of(sQTL_all_geneID), all_of(sQTL_all_pvalue))
-
-		print("adding rs numbers to the sQTL data")
-		#add rs genegene,,numbers to the eGeneTissue_region DF
-
-		#Add "chr" prefix to chromosome number if not present
-		eGeneTissue_region[[sQTL_all_chrom]] = paste0("chr", sub("chr", "", eGeneTissue_region[[sQTL_all_chrom]]))
-
-		#make chromosome_position column for merging
-		eGeneTissue_region$chromosome_position <- paste(eGeneTissue_region[[sQTL_all_chrom]],eGeneTissue_region[[sQTL_all_chromEnd]],sep="_")
+		eGeneTissue_region <- eGeneTissue_region %>% dplyr::select(all_of(sQTL_all_chrom), all_of(sQTL_all_chromEnd), all_of(sQTL_all_geneID), all_of(sQTL_all_pvalue), all_of(sQTL_all_intron_chr), all_of(sQTL_all_intron_bp_first), all_of(sQTL_all_intron_bp_end), all_of(sQTL_all_intron_clu))
 	}
+
+	print("adding rs numbers to the QTL data")
+	#add rs genegene,,numbers to the eGeneTissue_region DF
+
+	#Add "chr" prefix to chromosome number if not present
+	eGeneTissue_region[[all_chrom]] = paste0("chr", sub("chr", "", eGeneTissue_region[[all_chrom]]))
+
+	#make chromosome_position column for merging
+	eGeneTissue_region$chromosome_position <- paste(eGeneTissue_region[[all_chrom]],eGeneTissue_region[[all_chromEnd]],sep="_")
 
     #create data frame with rs numbers associated with chromosome_position and add to eGeneTissue region
     uniqID_DF = as.data.frame(t(as.data.frame(trait_chrom_pos)))
@@ -604,13 +577,9 @@ for(i in 1:nrow(eGenes)){
 		print("Running coloc")
 		#run coloc
 		if (traitType == "cc"){
-
 			coloc_results <- coloc.abf(dataset1=list(pvalues=colocInputFile[[trait_Pcol]], N=colocInputFile[[trait_Ncol]], type=traitType, s=traitProp), dataset2=list(pvalues=colocInputFile[[eQTL_all_pvalue]], N=qtl_N, type="quant"),MAF=colocInputFile[[trait_MAFcol_str]])
-
 		} else {
-
 			coloc_results <- coloc.abf(dataset1=list(pvalues=colocInputFile[[trait_Pcol]], N=colocInputFile[[trait_Ncol]], type=traitType), dataset2=list(pvalues=colocInputFile[[eQTL_all_pvalue]], N=qtl_N, type="quant"),MAF=colocInputFile[[trait_MAFcol_str]])
-
 		}
 
 		#prepare useful outputs
@@ -702,7 +671,7 @@ for(i in 1:nrow(eGenes)){
 		#remove any NAs
 		colocInputMasterFile = colocInputMasterFile[complete.cases(colocInputMasterFile), ]
 
-         if (0 %in% colocInputMasterFile[[trait_Pcol]]){
+        if (0 %in% colocInputMasterFile[[trait_Pcol]]){
 
             print("WARNING: THERE ARE SNPS WITH P-VALUES OF 0 AT THIS LOCUS. These SNPs have been removed for the Colocalization analysis and may lead to unusual regional association plots")
 
@@ -712,7 +681,7 @@ for(i in 1:nrow(eGenes)){
         }        
 
 		#combine intron columns
-		colocInputMasterFile$intronID = paste(colocInputMasterFile$intron_chr, colocInputMasterFile$intron_bp_first, colocInputMasterFile$intron_bp_end, colocInputMasterFile$intron_clu, colocInputMasterFile[[sQTL_all_geneID]], sep=":")
+		colocInputMasterFile$intronID = paste(colocInputMasterFile[[sQTL_all_intron_chr]], colocInputMasterFile[[sQTL_all_intron_bp_first]], colocInputMasterFile[[sQTL_all_intron_bp_end]], colocInputMasterFile[[sQTL_all_intron_clu]], colocInputMasterFile[[sQTL_all_geneID]], sep=":")
 
 		print("finding unique introns")
 		#find all unique introns
@@ -737,13 +706,9 @@ for(i in 1:nrow(eGenes)){
 			print("Running coloc")
 			#run coloc
 			if (traitType == "cc"){
-
 				coloc_results <- coloc.abf(dataset1=list(pvalues=colocInputFile[[trait_Pcol]], N=colocInputFile[[trait_Ncol]], type=traitType, s=traitProp), dataset2=list(pvalues=colocInputFile[[sQTL_all_pvalue]], N=qtl_N, type="quant"),MAF=colocInputFile[[trait_MAFcol_str]])
-
 			} else {
-
 				coloc_results <- coloc.abf(dataset1=list(pvalues=colocInputFile[[trait_Pcol]], N=colocInputFile[[trait_Ncol]], type=traitType), dataset2=list(pvalues=colocInputFile[[sQTL_all_pvalue]], N=qtl_N, type="quant"),MAF=colocInputFile[[trait_MAFcol_str]])
-
 			}
 
 			#prepare useful outputs
@@ -787,7 +752,7 @@ for(i in 1:nrow(eGenes)){
 
 				lead_SNP <- as.character(ld_clump_df[which.min(ld_clump_df$pval),]$rsid)
 
-		}
+			}
 
 
 			leadSNP_DF = colocInputFile#[colocInputFile$SNP == lead_SNP,]
@@ -811,7 +776,7 @@ for(i in 1:nrow(eGenes)){
 				dev.off()
 			}
 				
-			sQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = all_of(sQTL_all_chrom), position = all_of(trait_BPcol), p_value = all_of(sQTL_all_pval))
+			sQTL_leadSNP_DF = leadSNP_DF %>% dplyr::select(rsid = SNP, chromosome = all_of(sQTL_all_chrom), position = all_of(trait_BPcol), p_value = all_of(sQTL_all_pvalue))
 			sQTL_plot_title = paste(lead_SNP, geneSymbol, tissue)
             RA_plot <- gg_regional_association_plink(sQTL_leadSNP_DF, p_value_threshold = clump_P1, lead_snps = lead_SNP, bfile = plink_bfile, plink_bin = "plink", plot_distance = bps_in_region, plot_title = paste(sQTL_plot_title, "Regional Association Plot"), plot_subtitle = expression("GTEx v8"), region_recomb = region_recomb)
 
@@ -824,7 +789,6 @@ for(i in 1:nrow(eGenes)){
 			pdf(file = paste0(lead_SNP, "_", geneSymbol, "_", intronID, "_", tissue,".pdf"), paper = 'USr', width = 15, height = 20)
 			print(RA_plot)
 			dev.off()
-
-			}
+		}
 	}
 }
