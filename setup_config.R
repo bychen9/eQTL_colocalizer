@@ -49,6 +49,12 @@ sQTL_all_chrom = "chrom_b38"
 sQTL_all_chromEnd = "chromEnd_b38"
 #name of column in header representing p-value
 sQTL_all_pvalue = "pvalue_sQTL"
+#intron information
+sQTL_all_intron_chr = "intron_chr" 
+sQTL_all_intron_bp_first = "intron_bp_first"
+sQTL_all_intron_bp_end = "intron_bp_end"
+sQTL_all_intron_clu = "intron_clu"
+
 
 #path to GRCh37 to GRCh38 liftOver chain file
 liftOver_chain = "/appl/liftOver-20180423/chains/hg19ToHg38.over.chain"
