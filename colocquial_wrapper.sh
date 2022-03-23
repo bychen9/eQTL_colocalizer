@@ -92,7 +92,7 @@ do
 	sed "s/SNPNUMBER/$SNP/" ../$trait"_QTL_config_template.R" | sed "s/CHROMOSOME/$CHR/" | sed "s/STARTBP/$Start/" | sed "s/STOPBP/$Stop/" > ./QTL_config.R
 
 	#fire off the bsub job for this lead SNP
-	bsub < $bsubfile -q $bsub_queue
+	bsub < $bsubfile -q $bsub_queue -R "rusage[mem=16GB]" -M 16G
 
 	#cd back into the main directory to go to the next SNP 
 	cd ..
@@ -108,5 +108,5 @@ echo "all lead SNP jobs have been submitted"
 sed "s/TRAITNAME/$trait/" $colocquial_dir/summarize_results.bsub | sed "s|COLOCQUIAL_DIR|$colocquial_dir|" > ./summarize_results.bsub
 
 #run bsub to collect all of the COLOC results into 1 file
-bsub < summarize_results.bsub -q $bsub_queue
+bsub < summarize_results.bsub -q $bsub_queue -R "rusage[mem=16GB]" -M 16G
 
