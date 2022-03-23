@@ -42,7 +42,7 @@ The version of this code used in Bellomo et al. (https://www.medrxiv.org/content
    module load plink/1.90Beta4.5
    module load tabix
    module load liftOver
-```
+  ```
 - Then, execute ``colocquial.R`` in that directory 
   ```
   Rscript colocquial.R
