@@ -9,8 +9,6 @@ module load bedtools2
 
 echo "modules loaded"
 
-colocquial_dir="/project/voight_GWAS/bychen9/eQTL_colocalizer"
-
 #source the config file for this run (parameters such as GWAS file location and column names) and the setup config (paths to dependency files for the pipeline)
 source qtl_config.sh
 source $setup_config_sh
@@ -107,7 +105,8 @@ done
 echo "all lead SNP jobs have been submitted"
 
 #replace "TRAITNAME" with the $trait in out and err file names for summary file bsub
-sed "s/TRAITNAME/$trait/" $colocquial_dir/summarize_results.bsub > summarize_results.bsub
+sed "s/TRAITNAME/$trait/" $colocquial_dir/summarize_results.bsub | sed "s|COLOCQUIAL_DIR|$colocquial_dir|" > ./summarize_results.bsub
 
 #run bsub to collect all of the COLOC results into 1 file
 bsub < summarize_results.bsub -q $bsub_queue
+
