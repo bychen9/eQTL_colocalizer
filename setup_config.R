@@ -1,7 +1,7 @@
 #this R config file allows you to set the paths to all the dependency file you need to run the qtl colocalizer pipeline
 # this config file is required for running the colocalizer pipeline on one locus
 
-#provide the path to plink refernce files to be used for plink commands
+#provide the path to plink reference files to be used for plink commands
 plink_bfile = "/project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed"
 #provide the path to the plink ped files for the list of individuals you wish to use in your LD reference panel
 plink_keep = "/project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink"
@@ -58,5 +58,5 @@ sQTL_all_intron_clu = "intron_clu"
 
 #path to GRCh37 to GRCh38 liftOver chain file
 liftOver_chain = "/appl/liftOver-20180423/chains/hg19ToHg38.over.chain"
-#path to recombination rate directory (expected to b 1K genmoe chromosome recombination rate files or in the same format as these files: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates/
+#path to recombination rate directory (expected to be 1K genome chromosome recombination rate files or in the same format as these files: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates/
 recomb_rate_data="/project/voight_GWAS/wbone/recomb_data_dir/CEU/CEU"

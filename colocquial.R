@@ -114,13 +114,6 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
     #rename the df to be more user friendly
     names(locus_snps_ld) <- c("lead_rsid","rsid", "r2", "color_code", "lead")
 
-  #plot <- locus_snps %>%
-    #left_join(locus_snps_ld) %>%
-    #mutate(r2 = ifelse(is.na(r2) == TRUE, 0.1, r2)) %>%
-    #mutate(lead = ifelse(is.na(lead) == TRUE, FALSE, lead)) %>%
-    #mutate(color_code = as.character(cut(r2, breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1), labels = c("blue4", "blue", "darkgreen", "orange", "red"), include.lowest = TRUE))) %>%
-    #mutate(color_code = ifelse(lead == TRUE, "purple", color_code)) %>%
-    #ggplot(aes(position / 1000000, -log10(p_value), fill = color_code, size = lead, alpha = lead, shape = lead))
     RA_plot_data <- locus_snps %>%
     left_join(locus_snps_ld) %>%
     mutate(r2 = ifelse(is.na(r2) == TRUE, 0.1, r2)) %>%
@@ -158,28 +151,6 @@ gg_regional_association_plink <- function(df, lead_snps = NULL, rsid = rsid, chr
       legend.title.align = 0.5,
       legend.key = element_rect(size = 6, fill = "white", colour = NA)
     )
-
-    #geom_point() +
-    #geom_hline(yintercept = -log10(5e-8), linetype = "dashed") +
-    #scale_fill_identity(parse(text = "r^2"), guide = "legend", labels = c("Lead SNP", "0.8 - 1", "0.6 - 0.8", "0.4 - 0.6", "0.2 - 0.4", "0 - 0.2"), breaks = c("purple", "red", "orange", "darkgreen", "blue", "blue4")) +
-    #scale_size_manual(values = c(3, 8), guide = FALSE) +
-    #scale_shape_manual(values = c(21, 23), guide = FALSE) +
-    #scale_alpha_manual(values = c(0.8, 1), guide = FALSE) +
-    #scale_x_continuous(n.breaks = 3) +
-    #guides(fill = guide_legend(override.aes = list(shape = 22, size = 8))) +
-    #facet_wrap(~label, scales = "free", nrow = n_row) +
-    #labs(
-      #title = plot_title,
-      #subtitle = plot_subtitle,
-      #x = "Position (Mb)",
-      #y = expression(-log[10]("p-value"))
-    #) +
-    #theme_light(base_size = 16) +
-    #theme(
-      #plot.title = element_text(face = "bold"),
-      #legend.title.align = 0.5,
-      #legend.key = element_rect(size = 6, fill = "white", colour = NA)
-    #)
 
   return(plot)
 }
@@ -503,7 +474,6 @@ for(i in 1:nrow(eGenes)){
           noDecimalGeneID = gsub("\\..*","",geneID)
   
           #recreated eGeneTissue_region
-          #eGeneTissue_region = eGeneTissueInput[eGeneTissueInput$chromEnd >= colocStart & eGeneTissueInput$chromEnd <= colocStop,]
           eGeneTissue_region = eGeneTissueInput
 
           #grep the simplified Ensembl ID
