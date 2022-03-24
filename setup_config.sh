@@ -6,9 +6,15 @@ colocquial_dir="/project/voight_GWAS/bychen9/eQTL_colocalizer"
 
 #provide the path to plink refernce files to be used for plink commands
 plink_bfile="/project/voight_selscan/ksiewert/CardioMetaAnalysis/LDL_CHD_Bivar/LDClump/PlinkFilesOnlyRs/mergedBed"
+<<<<<<< HEAD
 
 #provide the path to the plink ped files for the list of individuals you wish to use in your LD reference panel
 plink_keep="/project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink"
 
 #provide the ID of the bsub queue you wish to submit your ColocQuiaL jobs to
+=======
+#provide the path to the plink ped files for the list of individuals you wish to use in your LD reference panel
+plink_keep="/project/voight_GWAS/wbone/neuro_degenerative_and_cardiometabolic_Bivariate_Scans/AD_bivariate_scan_code/EUR.final.plink"
+
+>>>>>>> 813087e5eab966d013ad837575fa340b39de557e
 bsub_queue="voight_long"
