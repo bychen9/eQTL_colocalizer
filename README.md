@@ -24,7 +24,7 @@ The version of this code used in Bellomo et al. (https://www.medrxiv.org/content
     - Create a tissue summary CSV file (e.g., ``GTEx_v8_Tissue_Summary_with_filenames.csv`` and ``GTEx_v8_sQTL_Tissue_Summary_with_filenames.csv``) containing the tissue names, sample sizes, and file names of the tabix files corresponding to your QTL dataset.
   - Create a configuration file for each downloaded QTL dataset based on ``setup_config.R`` and ``setup_config.sh``
   - LD and recombination rate reference files: Need to have merge plink files (.bed, .bim, .fam) files, a filie of which samples to use, and recombination rates to generate the regional association:
-  - Can download recombination rate files from here: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates
+  - Recombination rate files can be downloaded from here: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates
   - In ``colocquial_wrapper.sh``, update colocquial_dir to the path to the directory containing ``colocquial.R``, ``qtl_coloc_template.bsub``, and ``QTL_config_template.R``. 
 
 **Running the pipeline:**
