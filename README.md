@@ -28,11 +28,7 @@ The version of this code used in Bellomo et al. (https://www.medrxiv.org/content
   - In ``colocquial_wrapper.sh``, update colocquial_dir to the path to the directory containing ``colocquial.R``, ``qtl_coloc_template.bsub``, and ``QTL_config_template.R``. 
 
 **Running the pipeline:**
-<<<<<<< HEAD
 - Create an analysis directory, and add ``colocquial_wrapper.sh`` and a ``qtl_config.sh`` file modified to correspond to the GWAS signals on which you would like to perform eQTL or sQTL colocalization analysis (the provided example qtl_config.sh file provides further detail on the what is required in this file and what are the expected entries for user defined parameters). NOTE: In ``qtl_config.sh``, make sure to set setup_config_sh and setup_config_R to the configuration files of the dataset you want to use. 
-=======
-- Create an analysis directory, and add ``colocquial_wrapper.sh`` and a ``qtl_config.sh`` file modified to correspond to the GWAS signals on which you would like to perform eQTL or sQTL colocalization analysis. In ``qtl_config.sh``, make sure to set setup_config_sh and setup_config_R to the configuration files of the dataset you want to use. 
->>>>>>> 813087e5eab966d013ad837575fa340b39de557e
 - Then, execute ``colocquial_wrapper.sh`` in that directory
   ```
   bash colocquial_wrapper.sh
