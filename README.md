@@ -50,3 +50,4 @@ The version of this code used in Bellomo et al. (https://www.medrxiv.org/content
 
 **Additional Notes**
 - For entries in configuration files that are not pertinent to your available data, set to empty string.
+- The pipeline is currently set up to work with Pulit et al. BMI data. Directions on how to download the Pulit et al. data and an example ``qtl_config.sh`` and lead SNP file are provided in the test_data directory.
