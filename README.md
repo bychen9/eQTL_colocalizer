@@ -47,7 +47,7 @@ bash colocquial_wrapper.sh
 ```
 
 ### Running the pipeline on a single locus
-Create an analysis directory, and add ``colocquial.R`` and the ``QTL_config.R`` file modified from ``QTL_config_template.R`` to correspond to the GWAS signal on which you would like to perform eQTL or sQTL colocalization analysis.
+Create an analysis directory, and add ``colocquial.R`` and a ``QTL_config.R`` file modified from ``QTL_config_template.R`` to correspond to the GWAS signal on which you would like to perform eQTL or sQTL colocalization analysis.
 
 Import the necessary tools.
 ```
@@ -67,4 +67,6 @@ Rscript colocquial.R
 
 - The pipeline is currently set up to work with Pulit et al. BMI data. Directions on how to download the Pulit et al. data and example ``qtl_config.sh`` and lead SNP files are provided in the ``test_data/`` directory.
 
-- The version of this code used in Bellomo et al. (https://www.medrxiv.org/content/10.1101/2021.05.21.21257493v1) is in the ```Atherosclerosis_Multi_Trait_GWAS/``` directory.
+- The version of this code used in Bellomo et al. (https://doi.org/10.3389/fgene.2021.787545) is in the ```Atherosclerosis_Multi_Trait_GWAS/``` directory.
+
+- The most up-to-date and actively maintained version of ColocQuiaL is located here: https://github.com/bvoightlab/ColocQuiaL 
