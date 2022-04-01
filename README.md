@@ -2,8 +2,6 @@
 
 This repository contains the code needed to generate dependency files and run ColocQuiaL. Given GWAS signals of your choosing, this pipeline will run COLOC on your signals and all eQTL or sQTL summary statistics that you have available to you. For example, this pipeline will work with the single-tissue eQTL or sQTL datasets available from GTEx or eQTL Catalogue.
 
-The version of this code used in Bellomo et al. (https://www.medrxiv.org/content/10.1101/2021.05.21.21257493v1) is in the ```Atherosclerosis_Multi_Trait_GWAS/``` directory.
-
 ## Preparing the pipeline
 ###  Download files
 - Download GRCh38 dbSNP BED files from here: https://ftp.ncbi.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/BED/
@@ -28,9 +26,9 @@ The version of this code used in Bellomo et al. (https://www.medrxiv.org/content
 
 - Create a tissue summary CSV file (e.g., ``GTEx_v8_Tissue_Summary_with_filenames.csv`` and ``GTEx_v8_sQTL_Tissue_Summary_with_filenames.csv``) containing the tissue names, sample sizes, and file names of the tabix files corresponding to your QTL dataset.
 
-- Create a configuration file for each downloaded QTL dataset based on ``setup_config.R`` and ``setup_config.sh``
+- Create a configuration file for each downloaded QTL dataset based on ``setup_config.R`` and ``setup_config.sh``.
 
-- LD and recombination rate reference files: Need to have merge plink files (.bed, .bim, .fam) files, a filie of which samples to use, and recombination rates to generate the regional association
+- LD and recombination rate reference files: need to have merge plink files (.bed, .bim, .fam) files, a filie of which samples to use, and recombination rates to generate the regional association.
   - Recombination rate files can be downloaded from here: http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/working/20130507_omni_recombination_rates
   
 ### Modify path to files
@@ -43,15 +41,15 @@ Create an analysis directory, and add ``colocquial_wrapper.sh`` and a ``qtl_conf
 
 - In ``qtl_config.sh``, make sure to set ``setup_config_sh`` and ``setup_config_R`` to the configuration files of the dataset you want to use. 
 
-Then, execute ``colocquial_wrapper.sh`` in that directory
+Then, execute ``colocquial_wrapper.sh`` in that directory.
 ```
 bash colocquial_wrapper.sh
 ```
 
-## Running the pipeline on a single GWAS signal
+### Running the pipeline on a single locus
 Create an analysis directory, and add ``colocquial.R`` and the ``QTL_config.R`` file modified from ``QTL_config_template.R`` to correspond to the GWAS signal on which you would like to perform eQTL or sQTL colocalization analysis.
 
-Import the necessary tools
+Import the necessary tools.
 ```
 module load R/3.6.3
 module load plink/1.90Beta4.5
@@ -59,7 +57,7 @@ module load tabix
 module load liftOver
 ```
 
-Then, execute ``colocquial.R`` in that directory
+Then, execute ``colocquial.R`` in that directory.
 ```
 Rscript colocquial.R
 ```
@@ -67,4 +65,6 @@ Rscript colocquial.R
 ## Additional Notes
 - For entries in configuration files that are not pertinent to your available data, set to empty string.
 
-- The pipeline is currently set up to work with Pulit et al. BMI data. Directions on how to download the Pulit et al. data and an example ``qtl_config.sh`` and lead SNP file are provided in the ``test_data/`` directory.
+- The pipeline is currently set up to work with Pulit et al. BMI data. Directions on how to download the Pulit et al. data and example ``qtl_config.sh`` and lead SNP files are provided in the ``test_data/`` directory.
+
+- The version of this code used in Bellomo et al. (https://www.medrxiv.org/content/10.1101/2021.05.21.21257493v1) is in the ```Atherosclerosis_Multi_Trait_GWAS/``` directory.
