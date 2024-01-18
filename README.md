@@ -1,4 +1,5 @@
 # ColocQuiaL
+**Note: The most up-to-date and actively maintained version of ColocQuiaL is located here: https://github.com/bvoightlab/ColocQuiaL**
 
 This repository contains the code needed to generate dependency files and run ColocQuiaL. Given GWAS signals of your choosing, this pipeline will run COLOC on your signals and all eQTL or sQTL summary statistics that you have available to you. For example, this pipeline will work with the single-tissue eQTL or sQTL datasets available from GTEx or eQTL Catalogue.
 
@@ -69,4 +70,6 @@ Rscript colocquial.R
 
 - The version of this code used in Bellomo et al. (https://doi.org/10.3389/fgene.2021.787545) is in the ```Atherosclerosis_Multi_Trait_GWAS/``` directory.
 
-- The most up-to-date and actively maintained version of ColocQuiaL is located here: https://github.com/bvoightlab/ColocQuiaL 
+- If you use the ColocQuiaL pipeline please cite: Brian Y Chen, William P Bone, Kim Lorenz, Michael Levin, Marylyn D Ritchie, Benjamin F Voight, ColocQuiaL: A QTL-GWAS colocalization pipeline, Bioinformatics, 2022;, btac512, https://doi.org/10.1093/bioinformatics/btac512
+
+- The most up-to-date and actively maintained version of ColocQuiaL is located here: https://github.com/bvoightlab/ColocQuiaL
